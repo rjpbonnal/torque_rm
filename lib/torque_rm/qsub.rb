@@ -22,6 +22,22 @@ module TORQUE
 
   	alias :cpus :ppn
   	alias :cpus= :ppn=
+    alias :shell :S
+    alias :name :N
+    alias :queue :q
+    alias :account :A
+    alias :when :a
+    alias :checkpoint :c
+    alias :wd :d
+    alias :working_directory :d
+    alias :email :M
+    alias :stdout :o
+    alias :run_as_user :P
+    alias :rerunnable :r
+    alias :user_list :u
+    alias :variable_list :v
+    alias :exports :V
+    alias :additional_attributes :X
 
   	def initialize(opts={})
   		@a =opts[:a] || opts[:date_time]
