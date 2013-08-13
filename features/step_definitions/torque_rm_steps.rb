@@ -23,6 +23,15 @@ Given(/^I want to use the "(.*?)" shell$/) do |job_shell|
   @qsub.shell = job_shell
 end
 
+Given(/^I want to set the "(.*?)" to "(.*?)"$/) do |qsub_parameter, value|
+  @qsub.send "#{qsub_parameter}=", value # express the regexp above with the code you wish you had
+end
+
+Given(/^I want to use (\d+) cpus for a single node$/) do |n_cpus|
+  @qsub.cpus = n_cpus # express the regexp above with the code you wish you had
+end
+
+
 Given(/^the command "(.*?)"$/) do |job_command|
   @qsub.script = job_command # express the regexp above with the code you wish you had
 end
