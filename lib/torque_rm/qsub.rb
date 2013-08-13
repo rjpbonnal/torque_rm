@@ -40,6 +40,8 @@ module TORQUE
     alias :working_directory= :d=
     alias :email :M
     alias :email= :M=
+    alias :stderr :e
+    alias :stderr= :e=
     alias :stdout :o
     alias :stdout= :o=
     alias :run_as_user :P
