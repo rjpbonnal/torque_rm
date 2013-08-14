@@ -1,6 +1,25 @@
 = torque_rm
 
-Description goes here.
+Example of configuration:
+
+    TORQUE.qcommands_path='/usr/bin'
+    TORQUE.server = "my_grid.remote.net"
+    job = TORQUE::Qsub.new  m: "abe", name:"FirstTest", shell: '/bin/bash', ppn: 4
+    job.script = "echo `hostname`; sleep 1000"
+    job.submit
+    stats=TORQUE::Qstat.new
+
+    # get all stats on all jobs
+    stats.query
+
+    # select stats from only the submitted job
+    stat.query job_id: job.id
+
+    # it is also possible to get the stats from a single job
+    job.stat
+
+
+
 
 == Contributing to torque_rm
  
