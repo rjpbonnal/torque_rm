@@ -18,6 +18,7 @@ module TORQUE
   	attr_accessor :a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l
   	attr_accessor :m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z,:script
   	attr_accessor :walltime,:gres,:ppn, :procs
+    attr_accessor :id
   	attr_writer :nodes
 
     alias :cpus :ppn
@@ -58,6 +59,7 @@ module TORQUE
     alias :additional_attributes= :X=
 
   	def initialize(opts={})
+      @id = nil # configure when the job is submitted
   		@a =opts[:a] || opts[:date_time]
   		@A = opts[:A] || opts[:account]
   		@b = opts[:b]
@@ -134,6 +136,19 @@ module TORQUE
   	  pbs_script
     end
 
+    # Create a qsub job on the remote server and then submits it
+    # return the job_id from qsub and set it as a job variable.
+    def submit
+      TORQUE.server.file_upload StringIO.new(to_s), "#{name}.qsub"
+      @id = TORQUE.server.qsub("#{name}.qsub").first
+    end
+
+    def stat
+      qstat = TORQUE::Qstat.new
+      qstat.query(job_id: id).first
+    end
+
+
 
 
 
@@ -202,7 +217,7 @@ module TORQUE
   	# end
 
     def fields
-	  instance_variable_get("@table").keys
+	    instance_variable_get("@table").keys
     end
 
   end # Job
