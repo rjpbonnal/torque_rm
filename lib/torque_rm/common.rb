@@ -16,7 +16,7 @@ module TORQUE
   	@@qcommands_path = path
   	%w(qstat qsub qdel).each do |command|
   	  Rye::Cmd.remove_command command if Rye::Cmd.can? command
-  	  Rye::Cmd.add_command command, File.join(qcommands_path,'qstat')
+  	  Rye::Cmd.add_command command, File.join(qcommands_path, command)
   	end
   end
 
