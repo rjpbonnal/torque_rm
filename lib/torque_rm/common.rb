@@ -1,11 +1,9 @@
 require 'rye'
 module TORQUE
   @@qcommands_path = '/usr/bin'
-  @@master = nil
-  def self.server=(hostname=nil)
-  	if hostname.nil?
-  		@@master = Rye.shell
-  	else
+  @@master = Rye::Box.new("localhost")
+  def self.server=(hostname)
+  	if hostname
   		@@master = Rye::Box.new(hostname)
   	end
   end
