@@ -59,7 +59,7 @@ module TORQUE
   	rule(:fields) { job_name >> job_owner >> resources_used_cput >> resources_used_mem >> 
   		resources_used_vmem >> resources_used_walltime >> job_state >> queue  >> server >> 
   		checkpoint >> ctime >> error_path >> exec_host >> exec_port >> hold_types  >> join_path >>
-  		keep_files >> mail_points >> mail_users? >> mtime >> output_path >> tab.maybe >> newline.maybe >>
+  		keep_files >> mail_points >> mail_users? >> mtime >> output_path >> tab.maybe >> newline? >>
         priority >> qtime >> rerunable >> resource_list_nodect.maybe >> resource_list_nodes.maybe >>
         session_id >> shell_path_list.maybe >> variable_list >> etime >> submit_args.maybe >>
         start_time >> start_count >> fault_tolerant >> job_radix.maybe >> submit_host >> newline?
@@ -71,9 +71,22 @@ module TORQUE
         @parser = Parser.new
     end
 
-    def query
-        result = TORQUE.server.qstat("-f")  
-        @parser.parse(result.to_s)
+    # hash can contain keys:
+    # type = :raw just print a string
+    # job_id = job.id it will print only info about that job.
+    def query(hash=nil)
+        result = TORQUE.server.qstat("-f")
+        if hash && hash[:type] == :raw
+          result.to_s
+        else
+          results = @parser.parse(result.to_s.gsub(/\n\t/,''))
+          if hash && hash[:job_id]
+            results.select{|result| result[:job_id] == hash[:job_id]}
+          else
+            results
+          end
+        end
     end
+
   end # Qstat
 end # TORQUE
