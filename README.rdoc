@@ -18,6 +18,18 @@ Example of configuration:
     # it is also possible to get the stats from a single job
     job.stat
 
+an alternative form to submit a new job is: 
+
+    job = TORQUE::Qsub.new do |j|
+            j.m = "abe"
+            j.name = "FirstTest"
+            j.shell = '/bin/bash'
+            j.ppn = 4
+            j.script = "echo `hostname`; sleep 1000"
+          end
+    job.submit
+    job.stat
+
 
 
 

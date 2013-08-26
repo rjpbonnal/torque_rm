@@ -16,10 +16,19 @@ module TORQUE
   
   class Qsub
   	attr_accessor :a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l
-  	attr_accessor :m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z,:script
+  	attr_accessor :m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z, :script
   	attr_accessor :walltime,:gres,:ppn, :procs
     attr_accessor :id
   	attr_writer :nodes
+
+    # def script(*args)
+    #   if args.size == 1
+    #     @script =  args[0]
+    #   else
+    #     @script
+    #   end
+    # end
+
 
     alias :cpus :ppn
     alias :cpus= :ppn=
@@ -58,7 +67,7 @@ module TORQUE
     alias :additional_attributes :X
     alias :additional_attributes= :X=
 
-  	def initialize(opts={})
+  	def initialize(opts={}, &block)
       @id = nil # configure when the job is submitted
   		@a =opts[:a] || opts[:date_time]
   		@A = opts[:A] || opts[:account]
@@ -96,7 +105,24 @@ module TORQUE
   		@X = opts[:X] || opts[:X_forwardning] # boolean
   		@z = opts[:z] || opts[:no_jobid]
   		@script = opts[:script]
-  	end # initialize
+      if block_given?
+        if block.arity == 1
+          yield self
+        end
+      end
+
+    end # initialize
+
+    def config(&block)
+      if block_given?
+        if block.arity == 1
+          yield self
+        else
+          instance_eval &block
+          self
+        end
+      end
+  	end # config
 
   	def l
   		data=[@l, nodes, @walltime, @gres].select{|x| x}.join(',')
@@ -144,8 +170,12 @@ module TORQUE
     end
 
     def stat
-      qstat = TORQUE::Qstat.new
-      qstat.query(job_id: id).first
+      if id.nil? 
+        warn("No job submitted")
+      else
+        @qstat = @qstat || TORQUE::Qstat.new
+        @qstat.query(job_id: id)
+      end
     end
 
 

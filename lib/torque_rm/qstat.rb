@@ -56,13 +56,13 @@ module TORQUE
  	rule(:submit_host) {space >> str("submit_host = ") >> value.as(:submit_host) >> newline?}
 
 
-  	rule(:fields) { job_name >> job_owner >> resources_used_cput >> resources_used_mem >> 
-  		resources_used_vmem >> resources_used_walltime >> job_state >> queue  >> server >> 
-  		checkpoint >> ctime >> error_path >> exec_host >> exec_port >> hold_types  >> join_path >>
+  	rule(:fields) { job_name >> job_owner >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
+  		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state >> queue  >> server >> 
+  		checkpoint >> ctime >> error_path >> exec_host.maybe >> exec_port.maybe >> hold_types  >> join_path >>
   		keep_files >> mail_points >> mail_users? >> mtime >> output_path >> tab.maybe >> newline? >>
         priority >> qtime >> rerunable >> resource_list_nodect.maybe >> resource_list_nodes.maybe >>
-        session_id >> shell_path_list.maybe >> variable_list >> etime >> submit_args.maybe >>
-        start_time >> start_count >> fault_tolerant >> job_radix.maybe >> submit_host >> newline?
+        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime >> submit_args.maybe >>
+        start_time .maybe>> start_count.maybe >> fault_tolerant >> job_radix.maybe >> submit_host >> newline?
         }
 
     end #Parser
