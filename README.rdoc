@@ -59,6 +59,53 @@ In case the user has a custom file
 
 ## Stats
 
+When a job is submitted, is possible to get some stats
+
+    [{:job_id=>"2750.sun.universe.space"@1387,
+      :job_name=>"FirstTest"@1421,
+      :job_owner=>"helios@sun.universe.space"@1447,
+      :job_state=>"Q"@1489,
+      :queue=>"bio"@1503,
+      :server=>"sun.universe.space"@1520,
+      :checkpoint=>"u"@1551,
+      :ctime=>"Tue Aug 27 15:56:41 2013"@1565,
+      :error_path=>
+       "sun.universe.space:/home/helios/FirstTest.e2750"@1607,
+      :hold_types=>"n"@1689,
+      :join_path=>"n"@1707,
+      :keep_files=>"n"@1726,
+      :mail_points=>"abe"@1746,
+      :mtime=>"Tue Aug 27 15:56:41 2013"@1762,
+      :output_path=>
+       "spark.ingm.ad:/home/helios/FirstTest.o2750"@1805,
+      :priority=>"0"@1885,
+      :qtime=>"Tue Aug 27 15:56:41 2013"@1899,
+      :rerunable=>"True"@1940,
+      :resource_list_nodect=>"1"@1972,
+      :resource_list_nodes=>"1:ppn=4"@2000,
+      :shell_path_list=>"/bin/bash"@2030,
+      :variable_list=>
+       "PBS_O_QUEUE=bio,PBS_O_HOST=spark.ingm.ad,PBS_O_HOME=/home/helios,PBS_O_LANG=it_IT.UTF-8,PBS_O_LOGNAME=helios,PBS_O_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/helios/.rvm/bin,PBS_O_MAIL=/var/mail/helios,PBS_O_SHELL=/bin/bash,PBS_SERVER=spark,PBS_O_WORKDIR=/home/helios\n"@2060,
+      :etime=>"Tue Aug 27 15:56:41 2013"@2456,
+      :submit_args=>"FirstTest.qsub"@2499,
+      :fault_tolerant=>"False"@2535,
+    :submit_host=>"sun.universe.space"@2559}]
+
+directly from the job
+    
+    job.stat
+
+or by requesting the information using the specific object
+
+    stats=TORQUE::Qstat.new
+
+    # select stats from only the submitted job
+    stat.query job_id: job.id
+
+it will return an hash but is also possible to return the raw string from TORQUE/PBS
+
+    stat.query job_id: job.id, type: :raw    
+
 
 
 ## Contributing to torque_rm
