@@ -1,4 +1,4 @@
-= torque_rm
+# torque_rm
 
 Example of configuration:
 
@@ -18,22 +18,50 @@ Example of configuration:
     # it is also possible to get the stats from a single job
     job.stat
 
-an alternative form to submit a new job is: 
+## Configuration
 
-    job = TORQUE::Qsub.new do |j|
-            j.m = "abe"
-            j.name = "FirstTest"
-            j.shell = '/bin/bash'
-            j.ppn = 4
-            j.script = "echo `hostname`; sleep 1000"
+### Saving
+
+It is possible to save in a configuration file `server` and `path`.
+User can sare a configuration file:
+
+    TORQUE.qcommands_path='/usr/bin'
+    TORQUE.server = "my_grid.remote.net"
+    TORQUE.save_config
+
+it will create a YAML file `~/.torque_rm.yaml` in the user home directory.
+In case the user wants to save the configuration in a custom location 
+
+    TORQUE.save_config "file_name"
+
+### Loading
+
+Read a configuration from the dafult location `~/.torque_rm.yaml`
+
+    TORQUE.load_config
+
+In case the user has a custom file
+    
+    TORQUE.load_config "file_name"
+
+
+## Define a job using a DSL 
+
+    rhostname = TORQUE::Qsub.new do |job|
+            job.m = "abe"
+            job.name = "FirstTest"
+            job.shell = '/bin/bash'
+            job.ppn = 4
+            job.script = "echo `hostname`; sleep 1000"
           end
-    job.submit
-    job.stat
+    rhostname.submit
+    rhostname.stat
+
+## Stats
 
 
 
-
-== Contributing to torque_rm
+## Contributing to torque_rm
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
@@ -43,7 +71,7 @@ an alternative form to submit a new job is:
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2013 Raoul Jean Pierre Bonnal. See LICENSE.txt for
 further details.
