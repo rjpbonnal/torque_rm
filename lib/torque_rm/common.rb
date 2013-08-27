@@ -23,4 +23,37 @@ module TORQUE
   def self.qcommands_path
   	@@qcommands_path
   end
+
+  def self.path
+  	self.qcommands_path
+  end
+
+  def self.read_config(file)
+  	if File.exists?(file)
+  	  conf = YAML::load( File.open( file) )
+  	  self.server = conf[:hostname]
+  	  self.qcommands_path = conf[:path]
+    end
+  end
+
+  # Load configuration, default from file in user home with name .toruqe_rm.yaml
+  def self.load_config(file=nil)
+  	self.read_config File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file)
+  	self
+  end
+
+  # Save configuration, default in user home with name .toruqe_rm.yaml
+  def self.save_config(file=nil)
+  	File.write File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file), {hostname: @@master.host, path: @@qcommands_path}.to_yaml
+  end
+
+  # Get the host name/ip of the local/remote server user as submitter/interface to PBS
+  def self.host
+  	self.server.host
+  end
+
+  # Get the hostname, this may require an internet connection and fully qualified name
+  def self.hostname
+  	self.server.hostname
+  end
 end
