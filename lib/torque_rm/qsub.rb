@@ -164,9 +164,11 @@ module TORQUE
 
     # Create a qsub job on the remote server and then submits it
     # return the job_id from qsub and set it as a job variable.
+    # :dry => true will only transfer the file to the destination server and will not submit the job to the scheduler
+    #    the job object will not have an id associated. 
     def submit(opts={dry: false})
       TORQUE.server.file_upload StringIO.new(to_s), "#{name}.pbs"
-      @id = TORQUE.server.qsub("#{name}.qsub").first
+      @id = TORQUE.server.qsub("#{name}.qsub").first unless opts[:dry] == true
     end
 
     def stat
