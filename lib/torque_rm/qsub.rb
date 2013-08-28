@@ -48,6 +48,8 @@ module TORQUE
     alias :wd= :d=
     alias :working_directory :d
     alias :working_directory= :d=
+    alias :root_directory :D
+    alias :root_directory= :D=
     alias :email :M
     alias :email= :M=
     alias :stderr :e
@@ -167,7 +169,7 @@ module TORQUE
     # :dry => true will only transfer the file to the destination server and will not submit the job to the scheduler
     #    the job object will not have an id associated. 
     def submit(opts={dry: false})
-      TORQUE.server.file_upload StringIO.new(to_s), "#{name}.pbs"
+      TORQUE.server.file_upload StringIO.new(to_s), script_absolute_filename
       @id = TORQUE.server.qsub("#{name}.qsub").first unless opts[:dry] == true
     end
 
@@ -202,6 +204,23 @@ module TORQUE
 #   	end # to_s
 
   	private 
+
+    # get the current work directory.
+    # if root_directory is defined it will get precedence on working_directory
+    # if root or working directories are not defined the user home directory is
+    # the default directory
+    def script_dir
+      root_directory || working_directory || '~'
+    end
+
+    def script_filename
+      "#{name}.pbs"
+    end
+
+    def script_absolute_filename
+      File.join(script_dir,script_filename)
+    end
+
 
 	# Defines the options that will apply to the job. If the job executes upon a host which does not support checkpoint, these options will be ignored.
 	# Valid checkpoint options are:

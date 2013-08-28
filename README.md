@@ -18,6 +18,32 @@ Example of configuration:
     # it is also possible to get the stats from a single job
     job.stat
 
+## HowItWorks
+Torque_Rm uses Rye as interface with a local/remote computer/server, using ssh, so every command
+is a executed with ssh. Rye also guarantees a certain level of security disabling dangerous operations
+like moving, deleting files or traversing recursevely a directory. Obviously this feature can be disabled,
+but for now it is the default way Torque_Rm operates.
+
+## Job Configurations
+### Where files are saved ?
+By default torque_rm creates/transfers files in the user home directory `~`. It's possible to change
+this default behaviour setting an internal variable when a `job` is created on managed.
+Considering the example above configuring the wrinting directory before submitting the `job`:
+
+    job.root_directory = '/my/personal/path'
+
+or
+
+    job.working_directory = '/my/personal/path'
+
+`root` has precedence on `working` directory. It is possible to configure the `root`/`working` directory
+at the time of creation of the new job using the usual hash key/value convention.
+
+    :root_directory => '/my/personal/path'
+or 
+    
+    :working_directory => '/my/personal/path'
+
 ## Configuration
 
 ### Saving
