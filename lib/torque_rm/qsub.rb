@@ -164,8 +164,8 @@ module TORQUE
 
     # Create a qsub job on the remote server and then submits it
     # return the job_id from qsub and set it as a job variable.
-    def submit
-      TORQUE.server.file_upload StringIO.new(to_s), "#{name}.qsub"
+    def submit(opts={dry: false})
+      TORQUE.server.file_upload StringIO.new(to_s), "#{name}.pbs"
       @id = TORQUE.server.qsub("#{name}.qsub").first
     end
 
