@@ -80,8 +80,14 @@ module TORQUE
 
     end #Parser
 
+    class Trans < Parslet::Transform
+      rule(simple(:x)) { String(x) }
+    end
+
+
     def initialize
         @parser = Parser.new
+        @transformer = Trans.new
     end
 
     # hash can contain keys:
@@ -93,7 +99,7 @@ module TORQUE
         if hash[:type] == :raw
           result.to_s
         else
-          results = @parser.parse(result.to_s.gsub(/\n\t/,''))
+          results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
 
           if hash.key? :job_id
             results.select{|result| result[:job_id] == hash[:job_id]}
