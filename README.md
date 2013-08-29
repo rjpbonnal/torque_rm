@@ -130,9 +130,22 @@ or by requesting the information using the specific object
 
 it will return an hash but is also possible to return the raw string from TORQUE/PBS
 
-    stat.query job_id: job.id, type: :raw    
+    stat.query job_id: job.id, type: :raw   
+
+Quering multiple jobs at the same time is possible as well (note the 's' after 'id'):
+
+    stat.query job_ids: ["2751.sun.universe.space","2752.sun.universe.space","2754.sun.universe.space","2755.sun.universe.space"]
 
 
+## Delete Jobs
+
+From a qsub object if submitted:
+
+    job.rm
+
+Directly from PBS:
+
+    TORQUE::Qdel.rm("2750.sun.universe.space")
 
 ## Contributing to torque_rm
  
