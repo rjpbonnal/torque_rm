@@ -48,11 +48,13 @@ module TORQUE
  	#rule(:variable_list) {space >> str("Variable_List = ") >> value.as(:variable_list) >> newline}
     rule(:variable_list) {space >> str("Variable_List = ") >> variable_list_items.as(:variable_list) >> newline.maybe}
  	rule(:etime) {space >> str("etime = ") >> value.as(:etime) >> newline}
+    rule(:exit_status){ space >> str("exit_status = ") >> value.as(:exit_status) >> newline}
  	rule(:submit_args) {space >> str("submit_args = ") >> value.as(:submit_args) >> newline}
  	rule(:start_time) {space >> str("start_time = ") >> value.as(:start_time) >> newline}
  	rule(:start_count) {space >> str("start_count = ") >> value.as(:start_count) >> newline}
  	rule(:fault_tolerant) {space >> str("fault_tolerant = ") >> value.as(:fault_tolerant) >> newline}
  	rule(:job_radix) {space >> str("job_radix = ") >> value.as(:job_radix) >> newline}
+    rule(:total_runtime) {space >> str("total_runtime = ") >> value.as(:total_runtime) >> newline}
  	rule(:submit_host) {space >> str("submit_host = ") >> value.as(:submit_host) >> newline?}
 
 # a lot of maybe, maybe everything
@@ -61,8 +63,8 @@ module TORQUE
   		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
   		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
         priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_nodect.maybe >> resource_list_nodes.maybe >>
-        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> submit_args.maybe >>
-        start_time .maybe>> start_count.maybe >> fault_tolerant.maybe >> job_radix.maybe >> submit_host.maybe >> newline?
+        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
+        start_time .maybe>> start_count.maybe >> fault_tolerant.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
         }
 
 
