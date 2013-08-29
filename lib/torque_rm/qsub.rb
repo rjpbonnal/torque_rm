@@ -173,6 +173,7 @@ module TORQUE
       @id = TORQUE.server.qsub(script_absolute_filename).first unless opts[:dry] == true
     end
 
+    # get the stats for this job
     def stat
       if id.nil? 
         warn("No job submitted")
@@ -181,6 +182,16 @@ module TORQUE
         @qstat.query(job_id: id)
       end
     end
+
+
+    # delete this job from the queue
+    def rm
+      if id.nil? 
+        warn("No job submitted")
+      else
+        TORQUE::Qdel.rm(id)
+      end
+    end      
 
 
 

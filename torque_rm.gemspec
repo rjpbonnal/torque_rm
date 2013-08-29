@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/torque_rm/common.rb",
     "lib/torque_rm/qstat.rb",
     "lib/torque_rm/qsub.rb",
+    "lib/torque_rm/qdel.rb",
     "spec/spec_helper.rb",
     "spec/torque_rm_spec.rb"
   ]
