@@ -241,7 +241,8 @@ module TORQUE
   	end
 
   	def validate_mail_options(opts)
-  		opts[:m] || [opts[:send_on_abort], opts[:send_on_begin], opts[:send_on_end]].select{|item| item}.join
+  		value = opts[:m] || [opts[:send_on_abort], opts[:send_on_begin], opts[:send_on_end]].select{|item| item}.join
+      value.empty? ? nil : value 
   	end
 
     def validate_keep(opts)
