@@ -170,7 +170,7 @@ module TORQUE
     #    the job object will not have an id associated. 
     def submit(opts={dry: false})
       TORQUE.server.file_upload StringIO.new(to_s), script_absolute_filename
-      @id = TORQUE.server.qsub("#{name}.qsub").first unless opts[:dry] == true
+      @id = TORQUE.server.qsub(script_absolute_filename).first unless opts[:dry] == true
     end
 
     def stat
