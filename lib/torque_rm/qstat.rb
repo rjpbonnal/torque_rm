@@ -84,15 +84,24 @@ module TORQUE
 
     # hash can contain keys:
     # type = :raw just print a string
-    # job_id = job.id it will print only info about that job.
-    def query(hash=nil)
+    # job_id = job.id it will print info only about the specified job
+    # job_ids = ["1.server", "2.server", "3.server"] get an array for requested jobs
+    def query(hash={})
         result = TORQUE.server.qstat("-f")
-        if hash && hash[:type] == :raw
+        if hash[:type] == :raw
           result.to_s
         else
           results = @parser.parse(result.to_s.gsub(/\n\t/,''))
-          if hash && hash[:job_id]
+          if hash.key? :job_id
             results.select{|result| result[:job_id] == hash[:job_id]}
+          elsif hash.key? :job_ids
+            if hash[:job_ids].is_a? Array
+              results.select{|result| hash[:job_ids].include?(result[:job_id])}
+            elsif hash[:job_ids].is_a? String
+              warn "To be implemented for String object."
+            else
+              warm "To be implemented for #{hash[:job_ids].class}"
+            end
           else
             results
           end
