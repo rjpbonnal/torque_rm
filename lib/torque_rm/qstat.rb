@@ -1,24 +1,26 @@
+require 'date'
+
 module TORQUE
   class Qstat
     class Parser < Parslet::Parser
-  	rule(:newline) {match('\n').repeat(1)}
-  	rule(:space) {match('\s').repeat}
-  	rule(:space?) {space.maybe}
-    rule(:tab) {match('\t').repeat(1)}
-  	rule(:newline?) {newline.maybe}
-  	rule(:value) { match('[a-zA-Z0-9\.\_\@\/\+ \,\-:=]').repeat}
-  	rule(:qstat) { job_id.repeat }
-    root(:qstat)
+  rule(:newline) {match('\n').repeat(1)}
+  rule(:space) {match('\s').repeat}
+  rule(:space?) {space.maybe}
+  rule(:tab) {match('\t').repeat(1)}
+  rule(:newline?) {newline.maybe}
+  rule(:value) { match('[a-zA-Z0-9\.\_\@\/\+ \,\-:=]').repeat}
+  rule(:qstat) { job_id.repeat }
+  root(:qstat)
 
-    rule(:variable_item){ tab >> value >> newline }
-    rule(:variable_items) { variable_item.repeat }
-    rule(:variable_list_items) { value >> newline >> variable_items.maybe}
+  rule(:variable_item){ tab >> value >> newline }
+  rule(:variable_items) { variable_item.repeat }
+  rule(:variable_list_items) { value >> newline >> variable_items.maybe}
 
 
-  	rule(:job_id) { str("Job Id:") >> space >> value.as(:job_id) >> newline? >> fields.maybe >> newline? }
-  	rule(:job_name) {space >> str("Job_Name = ") >> value.as(:job_name) >> newline}
-  	rule(:job_owner) {space >> str("Job_Owner = ") >> value.as(:job_owner) >> newline}
-  	rule(:resources_used_cput) {space >> str("resources_used.cput = ") >> value.as(:resources_used_cput) >> newline}
+  rule(:job_id) { str("Job Id:") >> space >> value.as(:job_id) >> newline? >> fields.maybe >> newline? }
+  rule(:job_name) {space >> str("Job_Name = ") >> value.as(:job_name) >> newline}
+  rule(:job_owner) {space >> str("Job_Owner = ") >> value.as(:job_owner) >> newline}
+  rule(:resources_used_cput) {space >> str("resources_used.cput = ") >> value.as(:resources_used_cput) >> newline}
  	rule(:resources_used_mem) {space >> str("resources_used.mem = ") >> value.as(:resources_used_mem) >> newline}
  	rule(:resources_used_vmem) {space >> str("resources_used.vmem = ") >> value.as(:resources_used_vmem) >> newline}
  	rule(:resources_used_walltime) {space >> str("resources_used.walltime = ") >> value.as(:resources_used_walltime) >> newline}
@@ -45,20 +47,20 @@ module TORQUE
  	rule(:resource_list_nodes) {space >> str("Resource_List.nodes = ") >> value.as(:resource_list_nodes) >> newline}
  	rule(:session_id) {space >> str("session_id = ") >> value.as(:session_id) >> newline}
  	rule(:shell_path_list) {space >> str("Shell_Path_List = ") >> value.as(:shell_path_list) >> newline}
-    rule(:variable_list) {space >> str("Variable_List = ") >> variable_list_items.as(:variable_list) >> newline.maybe}
+  rule(:variable_list) {space >> str("Variable_List = ") >> variable_list_items.as(:variable_list) >> newline.maybe}
  	rule(:etime) {space >> str("etime = ") >> value.as(:etime) >> newline}
-    rule(:exit_status){ space >> str("exit_status = ") >> value.as(:exit_status) >> newline}
+  rule(:exit_status){ space >> str("exit_status = ") >> value.as(:exit_status) >> newline}
  	rule(:submit_args) {space >> str("submit_args = ") >> value.as(:submit_args) >> newline}
  	rule(:start_time) {space >> str("start_time = ") >> value.as(:start_time) >> newline}
  	rule(:start_count) {space >> str("start_count = ") >> value.as(:start_count) >> newline}
  	rule(:fault_tolerant) {space >> str("fault_tolerant = ") >> value.as(:fault_tolerant) >> newline}
-    rule(:comp_time) {space >> str("comp_time = ") >> value.as(:comp_time) >> newline}
+  rule(:comp_time) {space >> str("comp_time = ") >> value.as(:comp_time) >> newline}
  	rule(:job_radix) {space >> str("job_radix = ") >> value.as(:job_radix) >> newline}
-    rule(:total_runtime) {space >> str("total_runtime = ") >> value.as(:total_runtime) >> newline}
+  rule(:total_runtime) {space >> str("total_runtime = ") >> value.as(:total_runtime) >> newline}
  	rule(:submit_host) {space >> str("submit_host = ") >> value.as(:submit_host) >> newline?}
 
 # a lot of maybe, maybe everything
-  	rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
+	rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
   		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
   		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
   		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
@@ -68,20 +70,26 @@ module TORQUE
         }
 
 
-#original 
-    # rule(:fields) { job_name >> job_owner >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
-    #     resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state >> queue  >> server >> 
-    #     checkpoint >> ctime >> error_path >> exec_host.maybe >> exec_port.maybe >> hold_types  >> join_path >>
-    #     keep_files >> mail_points >> mail_users? >> mtime >> output_path >> tab.maybe >> newline? >>
-    #     priority >> qtime >> rerunable >> resource_list_nodect.maybe >> resource_list_nodes.maybe >>
-    #     session_id.maybe >> shell_path_list.maybe >> variable_list >> etime >> submit_args.maybe >>
-    #     start_time .maybe>> start_count.maybe >> fault_tolerant >> job_radix.maybe >> submit_host >> newline?
-    #     }
-
     end #Parser
 
     class Trans < Parslet::Transform
-      rule(simple(:x)) { String(x) }
+
+      # rule(:job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
+      #      :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
+      #      :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
+      #      :priority, :qtime, :rerunable, :resource_list_nodect, :resource_list_nodes, :session_id,
+      #      :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time
+      #      :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) {
+
+      # }
+        
+      # rule(:ctime) {DateTime.parse(ctime)}
+      # rule(:mtime => simple(:x)) {DateTime.parse(String(x))}
+      # rule(:qtime => simple(:x)) {DateTime.parse(String(x))}
+      # rule(:etime => simple(:x)) {DateTime.parse(String(x))}
+      # rule(:comp_time => simple(:x)) {DateTime.parse(String(x))}
+      # rule(:start_time => simple(:x)) {"ciao"}
+      # rule(simple(:x)) { String(x) }
     end
 
 
@@ -96,10 +104,13 @@ module TORQUE
     # job_ids = ["1.server", "2.server", "3.server"] get an array for requested jobs
     def query(hash={})
         result = TORQUE.server.qstat("-f")
+        results = nil
         if hash[:type] == :raw
           result.to_s
         else
-          results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
+          # results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
+          results = @parser.parse(result.to_s.gsub(/\n\t/,''))
+          results = [] if results.is_a?(String) && results.empty?
 
           if hash.key? :job_id
             results.select{|result| result[:job_id] == hash[:job_id]}
@@ -115,6 +126,19 @@ module TORQUE
             results
           end
         end
+        results.each do |job|
+            job.each_pair do |key, value|
+              if [:ctime, :mtime, :qtime, :etime, :comp_time, :start_time].include?(key)
+                job[key]=DateTime.parse(value.to_s)
+              elsif [:exec_port, :priority, :session_id, :start_count].include?(key)
+                job[key]=value.to_i
+              elsif [:rerunable, :fault_tolerant].include?(key)
+                job[key]=value.to_s=="True"
+              else
+                job[key]=value.to_s
+              end 
+          end
+        end #each_job
     end
 
   end # Qstat
