@@ -35,7 +35,7 @@ module TORQUE
       end
 
       def memory
-        resources_used_mem ? (job.resources_used_mem.split("kb").first.to_f/1000).round(1) : "0"
+        resources_used_mem ? (resources_used_mem.split("kb").first.to_f/1000).round(1) : "0"
       end
 
       def node 
@@ -206,7 +206,7 @@ private
         exit
       else
         jobs_info.each do |job|
-          line = [job.job_id.split(".").first,job.job_name,job.node,"#{job.mem} mb","#{job.time} sec.",job.queue,job.job_state]
+          line = [job.job_id.split(".").first,job.job_name,job.node,"#{job.memory} mb","#{job.time} sec.",job.queue,job.job_state]
           if job.completed?
             line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
           elsif job.queued?
