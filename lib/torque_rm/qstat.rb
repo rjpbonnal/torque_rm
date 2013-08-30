@@ -31,7 +31,7 @@ module TORQUE
       alias is_in_queue? is_queued?
 
       def time
-        total_runtime ? total_runtime.to_f.round(2).to_s : "0"
+        resources_used_walltime ||= "-"
       end
 
       def memory
@@ -217,7 +217,7 @@ private
       	exit
 			else
         jobs_info.each do |job|
-          line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time} sec.",job.queue,job.job_state]
+          line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time}",job.queue,job.job_state]
           if job.completed?
             line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
           elsif job.queued?
@@ -232,7 +232,7 @@ private
         end
         print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
         table = Terminal::Table.new :headings => head, :rows => rows
-        table.align_column(3,:center)
+      	Range.new(0,table.number_of_columns-1).to_a.each {|c| align_column(c,:center) } # set all columns alignment to :center
 				puts table
       end
 
