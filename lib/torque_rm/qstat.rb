@@ -41,6 +41,16 @@ module TORQUE
       def node 
         exec_host ? exec_host.split("+").map {|n| n.split(".").first}.uniq.join(",") : "-"
       end
+
+			def procs
+				if resource_list_ncpus
+					return resource_list_ncpus
+				elsif resource_list_nodes
+					return resource_list_nodes.split("ppn=")[-1]
+				else
+					return "-"
+				end
+			end
     end
 
     class Parser < Parslet::Parser
@@ -200,15 +210,14 @@ private
 
     def print_jobs_table(jobs_info)  
       rows = []
-      head = ["Job ID","Job Name","Node","Mem Used","Run Time","Queue","Status"]
+      head = ["Job ID","Job Name","Node(s)","Procs (per node)","Mem Used","Run Time","Queue","Status"]
       head.map! {|h| h.light_red}
-			p jobs_info
-      if jobs_info == ""
+      if jobs_info.empty?
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
-        exit
-      else
+      	exit
+			else
         jobs_info.each do |job|
-          line = [job.job_id.split(".").first,job.job_name,job.node,"#{job.memory} mb","#{job.time} sec.",job.queue,job.job_state]
+          line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time} sec.",job.queue,job.job_state]
           if job.completed?
             line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
           elsif job.queued?
@@ -221,13 +230,10 @@ private
             rows << line.map {|l| l.red.blink}
           end  
         end
-        if jobs_info.empty?
-          puts "No jobs in the queue"
-        else
-          print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
-          table = Terminal::Table.new :headings => head, :rows => rows
-        puts table
-        end
+        print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
+        table = Terminal::Table.new :headings => head, :rows => rows
+        table.align_column(3,:center)
+				puts table
       end
 
     end
