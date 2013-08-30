@@ -202,7 +202,7 @@ private
       rows = []
       head = ["Job ID","Job Name","Node","Mem Used","Run Time","Queue","Status"]
       head.map! {|h| h.light_red}
-      if jobs_info == ""
+      if jobs_info.empty?
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
         exit
       else
@@ -220,13 +220,9 @@ private
             line[-1] = "Unknown"; rows << line.map {|l| l.red.blink}
           end  
         end
-        if jobs_info.empty?
-          puts "No jobs in the queue"
-        else
           print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
           table = Terminal::Table.new :headings => head, :rows => rows
-        puts table
-        end
+          puts table
       end
 
     end
