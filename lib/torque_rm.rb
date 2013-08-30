@@ -1,5 +1,7 @@
 require 'parslet'
 require 'yaml'
+require 'colorize'
+require 'terminal-table'
 require 'torque_rm/common'
 require 'torque_rm/qsub'
 require 'torque_rm/qstat'

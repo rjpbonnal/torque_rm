@@ -2,6 +2,47 @@ require 'date'
 
 module TORQUE
   class Qstat
+    Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
+           :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
+           :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
+           :priority, :qtime, :rerunable, :resource_list_nodect, :resource_list_nodes, :session_id,
+           :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
+           :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
+      #add here your custom method for Qstat::Job
+      def is_runnig?
+        job_state == 'R'
+      end
+      alias running? is_runnig?
+
+      def is_completed?
+        job_state == 'C'
+      end
+      alias completed? is_completed?
+
+      def is_exited?
+        job_state == 'E'
+      end
+      alias exited? is_exited?
+
+      def is_queued?
+        job_state == 'Q'
+      end
+      alias queued? is_queued?
+      alias is_in_queue? is_queued?
+
+      def time
+        total_runtime ? total_runtime.to_f.round(2).to_s : "0"
+      end
+
+      def memory
+        resources_used_mem ? (job.resources_used_mem.split("kb").first.to_f/1000).round(1) : "0"
+      end
+
+      def node 
+        exec_host ? exec_host.split(".").first : "-" 
+      end
+    end
+
     class Parser < Parslet::Parser
   rule(:newline) {match('\n').repeat(1)}
   rule(:space) {match('\s').repeat}
@@ -90,13 +131,14 @@ module TORQUE
       # rule(:comp_time => simple(:x)) {DateTime.parse(String(x))}
       # rule(:start_time => simple(:x)) {"ciao"}
       # rule(simple(:x)) { String(x) }
-    end
+    end #Trans
 
 
     def initialize
         @parser = Parser.new
         @transformer = Trans.new
-    end
+        @last_query = nil #cache last query, it can be useful to generate some kind of statistics ? 
+    end #initialize
 
     # hash can contain keys:
     # type = :raw just print a string
@@ -126,19 +168,62 @@ module TORQUE
             results
           end
         end
-        results.each do |job|
-            job.each_pair do |key, value|
-              if [:ctime, :mtime, :qtime, :etime, :comp_time, :start_time].include?(key)
-                job[key]=DateTime.parse(value.to_s)
-              elsif [:exec_port, :priority, :session_id, :start_count].include?(key)
-                job[key]=value.to_i
-              elsif [:rerunable, :fault_tolerant].include?(key)
-                job[key]=value.to_s=="True"
-              else
-                job[key]=value.to_s
-              end 
-          end
+
+        @last_query = transform_parselet_result(results)
+    end #query
+
+    def display(hash={})
+      query(hash)
+      print_jobs_table(@last_query)
+    end
+
+private
+
+    def transform_parselet_result(results)
+        results.map do |raw_job|
+          job = Job.new
+          raw_job.each_pair do |key, value|
+            if [:ctime, :mtime, :qtime, :etime, :comp_time, :start_time].include?(key)
+              job.send "#{key}=", DateTime.parse(value.to_s)
+            elsif [:exec_port, :priority, :session_id, :start_count].include?(key)
+              job.send "#{key}=", value.to_i
+            elsif [:rerunable, :fault_tolerant].include?(key)
+              job.send "#{key}=", value.to_s=="True"
+            else
+              job.send "#{key}=", value.to_s
+            end
+          end #each pair
+          job
         end #each_job
+    end
+
+    def print_jobs_table(jobs_info)  
+      rows = []
+      head = ["Job ID","Job Name","Node","Mem Used","Run Time","Queue","Status"]
+      head.map! {|h| h.light_red}
+      if jobs_info == ""
+        print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
+        exit
+      else
+        jobs_info.each do |job|
+          line = [job.job_id.split(".").first,job.job_name,job.node,"#{job.mem} mb","#{job.time} sec.",job.queue,job.job_state]
+          if job.completed?
+            line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
+          elsif job.queued?
+            line[-1] = "Queued"; rows << line.map {|l| l.light_blue}
+          elsif job.running?
+            line[-1] = "Running"; rows << line.map {|l| l.green}
+          elsif job.exited?
+            line[-1] = "Exiting"; rows << line.map {|l| l.green.blink}
+          else
+            line[-1] = "Unknown"; rows << line.map {|l| l.red.blink}
+          end  
+        end
+        print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
+        table = Terminal::Table.new :headings => head, :rows => rows
+        puts table
+      end
+
     end
 
   end # Qstat
