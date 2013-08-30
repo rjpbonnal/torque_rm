@@ -31,7 +31,7 @@ module TORQUE
       alias is_in_queue? is_queued?
 
       def time
-        resources_used_walltime ||= "-"
+				return (resources_used_walltime) ? resources_used_walltime : "-"
       end
 
       def memory
@@ -164,12 +164,9 @@ module TORQUE
           # results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
           results = @parser.parse(result.to_s.gsub(/\n\t/,''))
           results = [] if results.is_a?(String) && results.empty?
-
-          if hash.key? :job_id
-            results.select{|r| (r[:job_id] == hash[:job_id] || r[:job_id] == hash[:job_id] ) }
-          elsif hash.key? :job_ids
+          if hash.key? :job_ids
             if hash[:job_ids].is_a? Array
-              results.select{|r| hash[:job_ids].include?(r[:job_id])}
+              results.select! {|j| (hash[:job_ids].include?(j[:job_id].to_s) || hash[:job_ids].include?(j[:job_id].to_s.split(".").first))}
             elsif hash[:job_ids].is_a? String
               warn "To be implemented for String object."
             else
@@ -209,7 +206,7 @@ private
     end
 
     def print_jobs_table(jobs_info)  
-      rows = []
+			rows = []
       head = ["Job ID","Job Name","Node(s)","Procs (per node)","Mem Used","Run Time","Queue","Status"]
       head.map! {|h| h.light_red}
       if jobs_info.empty?
@@ -232,7 +229,7 @@ private
         end
         print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
         table = Terminal::Table.new :headings => head, :rows => rows
-      	Range.new(0,table.number_of_columns-1).to_a.each {|c| align_column(c,:center) } # set all columns alignment to :center
+      	Range.new(0,table.number_of_columns-1).to_a.each {|c| table.align_column(c,:center) } # set all columns alignment to :center
 				puts table
       end
 
