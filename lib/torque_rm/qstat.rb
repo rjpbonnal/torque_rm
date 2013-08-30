@@ -5,7 +5,7 @@ module TORQUE
     Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
            :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
            :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
-           :priority, :qtime, :rerunable, :resource_List_ncpus, :resource_list_nodect, :resource_list_nodes, :session_id,
+           :priority, :qtime, :rerunable, :resource_list_ncpus, :resource_list_nodect, :resource_list_nodes, :session_id,
            :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
            :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
       #add here your custom method for Qstat::Job
@@ -220,9 +220,13 @@ private
             line[-1] = "Unknown"; rows << line.map {|l| l.red.blink}
           end  
         end
-        print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
-        table = Terminal::Table.new :headings => head, :rows => rows
+        if jobs_info.empty?
+          puts "No jobs in the queue"
+        else
+          print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
+          table = Terminal::Table.new :headings => head, :rows => rows
         puts table
+        end
       end
 
     end
