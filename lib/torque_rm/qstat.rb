@@ -5,7 +5,7 @@ module TORQUE
     Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
            :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
            :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
-           :priority, :qtime, :rerunable, :resource_list_nodect, :resource_list_nodes, :session_id,
+           :priority, :qtime, :rerunable, :resource_List_ncpus, :resource_list_nodect, :resource_list_nodes, :session_id,
            :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
            :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
       #add here your custom method for Qstat::Job
@@ -84,6 +84,7 @@ module TORQUE
  	rule(:priority) {space >> str("Priority = ") >> value.as(:priority) >> newline}
  	rule(:qtime) {space >> str("qtime = ") >> value.as(:qtime) >> newline}
  	rule(:rerunable) {space >> str("Rerunable = ") >> value.as(:rerunable) >> newline}
+  rule(:resource_list_ncpus) {space >> str("Resource_List.ncpus = ") >> value.as(:resource_list_ncpus) >> newline}
  	rule(:resource_list_nodect) {space >> str("Resource_List.nodect = ") >> value.as(:resource_list_nodect) >> newline}
  	rule(:resource_list_nodes) {space >> str("Resource_List.nodes = ") >> value.as(:resource_list_nodes) >> newline}
  	rule(:session_id) {space >> str("session_id = ") >> value.as(:session_id) >> newline}
@@ -105,7 +106,7 @@ module TORQUE
   		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
   		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
   		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
-        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_nodect.maybe >> resource_list_nodes.maybe >>
+        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_ncpus.maybe >>resource_list_nodect.maybe >> resource_list_nodes.maybe >>
         session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
         start_time .maybe>> start_count.maybe >>fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
         }
@@ -155,7 +156,7 @@ module TORQUE
           results = [] if results.is_a?(String) && results.empty?
 
           if hash.key? :job_id
-            results.select{|result| result[:job_id] == hash[:job_id]}
+            results.select{|result| (result[:job_id] == hash[:job_id] || result[:job_id] == hash[:job_id] ) }
           elsif hash.key? :job_ids
             if hash[:job_ids].is_a? Array
               results.select{|result| hash[:job_ids].include?(result[:job_id])}
