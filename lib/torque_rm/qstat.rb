@@ -208,7 +208,7 @@ private
     def print_jobs_table(jobs_info)  
 			rows = []
       head = ["Job ID","Job Name","Node(s)","Procs (per node)","Mem Used","Run Time","Queue","Status"]
-      head.map! {|h| h.light_red}
+      headings = head.map {|h| {:value => h, :alignment => :center}}
       if jobs_info.empty?
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
       	exit
@@ -216,7 +216,7 @@ private
         jobs_info.each do |job|
           line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time}",job.queue,job.job_state]
           if job.completed?
-            line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
+            line[-1] = "Completed"; rows << line.map {|l| l.underline}
           elsif job.queued?
             line[-1] = "Queued"; rows << line.map {|l| l.light_blue}
           elsif job.running?
@@ -227,8 +227,8 @@ private
             rows << line.map {|l| l.red.blink}
           end  
         end
-        print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
-        table = Terminal::Table.new :headings => head, :rows => rows
+        print "\nSummary of submitted jobs for user: ".light_blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
+        table = Terminal::Table.new :headings => headings, :rows => rows
       	Range.new(0,table.number_of_columns-1).to_a.each {|c| table.align_column(c,:center) } # set all columns alignment to :center
 				puts table
       end
