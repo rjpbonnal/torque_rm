@@ -39,7 +39,7 @@ module TORQUE
       end
 
       def node 
-        exec_host ? exec_host.split(".").first : "-" 
+        exec_host ? exec_host.split("+").map {|n| n.split(".").first}.uniq.join(",") : "-"
       end
     end
 
@@ -156,10 +156,10 @@ module TORQUE
           results = [] if results.is_a?(String) && results.empty?
 
           if hash.key? :job_id
-            results.select{|result| (result[:job_id] == hash[:job_id] || result[:job_id] == hash[:job_id] ) }
+            results.select{|r| (r[:job_id] == hash[:job_id] || r[:job_id] == hash[:job_id] ) }
           elsif hash.key? :job_ids
             if hash[:job_ids].is_a? Array
-              results.select{|result| hash[:job_ids].include?(result[:job_id])}
+              results.select{|r| hash[:job_ids].include?(r[:job_id])}
             elsif hash[:job_ids].is_a? String
               warn "To be implemented for String object."
             else
@@ -202,6 +202,7 @@ private
       rows = []
       head = ["Job ID","Job Name","Node","Mem Used","Run Time","Queue","Status"]
       head.map! {|h| h.light_red}
+			p jobs_info
       if jobs_info == ""
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
         exit
@@ -217,7 +218,7 @@ private
           elsif job.exited?
             line[-1] = "Exiting"; rows << line.map {|l| l.green.blink}
           else
-            line[-1] = "Unknown"; rows << line.map {|l| l.red.blink}
+            rows << line.map {|l| l.red.blink}
           end  
         end
         if jobs_info.empty?
