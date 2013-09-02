@@ -31,7 +31,7 @@ module TORQUE
       alias is_in_queue? is_queued?
 
       def time
-        total_runtime ? total_runtime.to_f.round(2).to_s : "0"
+				return (resources_used_walltime) ? resources_used_walltime : "-"
       end
 
       def memory
@@ -39,8 +39,20 @@ module TORQUE
       end
 
       def node 
-        exec_host ? exec_host.split(".").first : "-" 
+        exec_host ? exec_host.split("+").map {|n| n.split(".").first}.uniq.join(",") : "-"
       end
+
+			def procs
+				resource_list.each do |r|
+					resource = r[:resource]
+					if resource[:name] == "ncpus"
+						return resource[:value]
+					elsif resource[:name] == "nodes"
+						return resource[:value].split("ppn=")[-1]
+					end
+				end
+				return "-"
+			end
     end
 
     class Parser < Parslet::Parser
@@ -74,7 +86,7 @@ module TORQUE
  	rule(:ctime)                   {(space >> str("ctime = ") >> value.as(:datetime) >> newline).as(:ctime)}
  	rule(:error_path)              {(space >> str("Error_Path = ") >> value.as(:string) >> newline).as(:error_path)}
  	rule(:exec_host)               {(space >> str("exec_host = ") >> value.as(:string) >> newline).as(:exec_host)}
- 	rule(:exec_port)               {(space >> str("exec_port = ") >> value.as(:integer) >> newline).as(:exec_port)}
+ 	rule(:exec_port)               {(space >> str("exec_port = ") >> value.as(:string) >> newline).as(:exec_port)}
  	rule(:hold_types)              {(space >> str("Hold_Types = ") >> value.as(:string) >> newline).as(:hold_types)}
  	rule(:join_path)               {(space >> str("Join_Path = ") >> value.as(:string) >> newline).as(:join_path)}
  	rule(:keep_files)              {(space >> str("Keep_Files = ") >> value.as(:string) >> newline).as(:keep_files)}
@@ -150,12 +162,9 @@ module TORQUE
           end
 
           results = [] if results.is_a?(String) && results.empty?
-
-          if hash.key? :job_id
-            results.select{|result| (result[:job_id] == hash[:job_id] || result[:job_id] == hash[:job_id] ) }
-          elsif hash.key? :job_ids
+          if hash.key? :job_ids
             if hash[:job_ids].is_a? Array
-              results.select{|result| hash[:job_ids].include?(result[:job_id])}
+              results.select! {|j| (hash[:job_ids].include?(j[:job_id].to_s) || hash[:job_ids].include?(j[:job_id].to_s.split(".").first))}
             elsif hash[:job_ids].is_a? String
               warn "To be implemented for String object."
             else
@@ -187,17 +196,17 @@ private
     end
 
     def print_jobs_table(jobs_info)  
-      rows = []
-      head = ["Job ID","Job Name","Node","Mem Used","Run Time","Queue","Status"]
-      head.map! {|h| h.light_red}
+			rows = []
+      head = ["Job ID","Job Name","Node(s)","Procs (per node)","Mem Used","Run Time","Queue","Status"]
+      headings = head.map {|h| {:value => h, :alignment => :center}}
       if jobs_info.empty?
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
-        exit
-      else
+      	exit
+			else
         jobs_info.each do |job|
-          line = [job.job_id.split(".").first,job.job_name,job.node,"#{job.memory} mb","#{job.time} sec.",job.queue,job.job_state]
+          line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time}",job.queue,job.job_state]
           if job.completed?
-            line[-1] = "Completed"; rows << line.map {|l| l.white.on_black.underline}
+            line[-1] = "Completed"; rows << line.map {|l| l.underline}
           elsif job.queued?
             line[-1] = "Queued"; rows << line.map {|l| l.light_blue}
           elsif job.running?
@@ -205,12 +214,13 @@ private
           elsif job.exited?
             line[-1] = "Exiting"; rows << line.map {|l| l.green.blink}
           else
-            line[-1] = "Unknown"; rows << line.map {|l| l.red.blink}
+            rows << line.map {|l| l.red.blink}
           end  
         end
-          print "\nSummary of submitted jobs for user: ".blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
-          table = Terminal::Table.new :headings => head, :rows => rows
-          puts table
+        print "\nSummary of submitted jobs for user: ".light_blue+"#{jobs_info.first[:job_owner].split("@").first.green}\n\n"
+        table = Terminal::Table.new :headings => headings, :rows => rows
+      	Range.new(0,table.number_of_columns-1).to_a.each {|c| table.align_column(c,:center) } # set all columns alignment to :center
+				puts table
       end
 
     end
