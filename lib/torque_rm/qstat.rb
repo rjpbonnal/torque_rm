@@ -162,7 +162,14 @@ module TORQUE
           end
 
           results = [] if results.is_a?(String) && results.empty?
-          if hash.key? :job_ids
+          if hash.key? :job_id
+            # if hash[:job_id]..is_a? String
+
+              results.select! {|j| puts j[:job_id].to_s.split(".").first; (hash[:job_id].to_s == j[:job_id] || hash[:job_id].to_s == j[:job_id].to_s.split(".").first)}
+            # else
+              # warn "You gave me #{hash[:job_id].class}, only String is supported."
+            # end
+          elsif hash.key? :job_ids
             if hash[:job_ids].is_a? Array
               results.select! {|j| (hash[:job_ids].include?(j[:job_id].to_s) || hash[:job_ids].include?(j[:job_id].to_s.split(".").first))}
             elsif hash[:job_ids].is_a? String
