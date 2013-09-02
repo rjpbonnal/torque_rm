@@ -24,6 +24,11 @@ get '/qstat' do
    haml :qstat, :format => :html5, :locals => {:jobs => jobs}
 end
 
+get '/qstat/:job_id' do |job_id|
+	job = TORQUE::Qstat.new.query job_id: job_id
+	haml :qstat_job, :format => :html5, :locals => {:job => job}
+end
+
 
 __END__
 
