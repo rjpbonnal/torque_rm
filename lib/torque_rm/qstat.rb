@@ -84,7 +84,7 @@ module TORQUE
  	rule(:ctime)                   {(space >> str("ctime = ") >> value.as(:datetime) >> newline).as(:ctime)}
  	rule(:error_path)              {(space >> str("Error_Path = ") >> value.as(:string) >> newline).as(:error_path)}
  	rule(:exec_host)               {(space >> str("exec_host = ") >> value.as(:string) >> newline).as(:exec_host)}
- 	rule(:exec_port)               {(space >> str("exec_port = ") >> value.as(:integer) >> newline).as(:exec_port)}
+ 	rule(:exec_port)               {(space >> str("exec_port = ") >> value.as(:string) >> newline).as(:exec_port)}
  	rule(:hold_types)              {(space >> str("Hold_Types = ") >> value.as(:string) >> newline).as(:hold_types)}
  	rule(:join_path)               {(space >> str("Join_Path = ") >> value.as(:string) >> newline).as(:join_path)}
  	rule(:keep_files)              {(space >> str("Keep_Files = ") >> value.as(:string) >> newline).as(:keep_files)}
