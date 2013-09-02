@@ -43,13 +43,15 @@ module TORQUE
       end
 
 			def procs
-				if resource_list_ncpus
-					return resource_list_ncpus
-				elsif resource_list_nodes
-					return resource_list_nodes.split("ppn=")[-1]
-				else
-					return "-"
+				resource_list.each do |r|
+					resource = r[:resource]
+					if resource[:name] == "ncpus"
+						return resource[:value]
+					elsif resource[:name] == "nodes"
+						return resource[:value].split("ppn=")[-1]
+					end
 				end
+				return "-"
 			end
     end
 
