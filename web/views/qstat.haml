@@ -1,7 +1,10 @@
-%table
+
+
+
+%table{class: "table table-striped table-bordered"}
   %tbody
     - jobs.each do |job|
-      %tr
+      %tr{job_line_color(job)}
         %td= job.job_id.split(".").first
         %td= job.job_name
         %td= job.node
@@ -9,3 +12,8 @@
         %td= "#{job.time} sec."
         %td= job.queue
         %td= job.job_state
+
+
+
+
+

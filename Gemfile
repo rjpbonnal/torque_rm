@@ -9,6 +9,7 @@ gem "terminal-table"
 gem 'sinatra'
 gem 'shotgun'
 gem 'haml'
+gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 # gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
