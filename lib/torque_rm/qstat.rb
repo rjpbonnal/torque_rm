@@ -5,7 +5,7 @@ module TORQUE
     Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
            :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
            :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
-           :priority, :qtime, :rerunable, :resource_list_ncpus, :resource_list_nodect, :resource_list_nodes, :session_id,
+           :priority, :qtime, :rerunable, :resource_list, :session_id,
            :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
            :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
       #add here your custom method for Qstat::Job
@@ -87,12 +87,9 @@ module TORQUE
  	rule(:qtime)                   {(space >> str("qtime = ") >> value.as(:datetime) >> newline).as(:qtime)}
  	rule(:rerunable)               {(space >> str("Rerunable = ") >> value.as(:boolean) >> newline).as(:rerunable)}
 
-  rule(:resource)      {(space >> resource_list_name >> str(" = ") >> (value.as(:string)).as(:value) >> newline).as(:resource)}
-  rule(:resource_list)     { resource.repeat.as(:resource_list)}
+  rule(:resource)                {(space >> resource_list_name >> str(" = ") >> (value.as(:string)).as(:value) >> newline).as(:resource)}
+  rule(:resource_list)           { resource.repeat.as(:resource_list)}
 
-  # rule(:resource_list_ncpus)     {(space >> str("Resource_List.ncpus = ") >> value.as(:string) >> newline).as(:resource_list_ncpus)}
- 	# rule(:resource_list_nodect)    {(space >> str("Resource_List.nodect = ") >> value.as(:string) >> newline).as(:resource_list_nodect)}
- 	# rule(:resource_list_nodes)     {(space >> str("Resource_List.nodes = ") >> value.as(:string) >> newline).as(:resource_list_nodes)}
  	rule(:session_id)              {(space >> str("session_id = ") >> value.as(:integer) >> newline).as(:session_id)}
  	rule(:shell_path_list)         {(space >> str("Shell_Path_List = ") >> value.as(:string) >> newline).as(:shell_path_list)}
   rule(:variable_list)           {(space >> str("Variable_List = ") >> variable_list_items.as(:string) >> newline.maybe).as(:variable_list)}
@@ -108,14 +105,6 @@ module TORQUE
  	rule(:submit_host)             {(space >> str("submit_host = ") >> value.as(:string) >> newline?).as(:submit_host)}
 
 # a lot of maybe, maybe everything
-	# rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
- #  		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
- #  		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
- #  		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
- #        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_ncpus.maybe >>resource_list_nodect.maybe >> resource_list_nodes.maybe >>
- #        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
- #        start_time .maybe>> start_count.maybe >>fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
- #        }
 
   rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
       resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
@@ -130,26 +119,10 @@ module TORQUE
     end #Parser
 
     class Trans < Parslet::Transform
-
-      # rule(:job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
-      #      :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
-      #      :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
-      #      :priority, :qtime, :rerunable, :resource_list_nodect, :resource_list_nodes, :session_id,
-      #      :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time
-      #      :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) {
-
-      # }
-        
       rule(:datetime => simple(:datetime)) {DateTime.parse(datetime)}
       rule(:string => simple(:string))     {String(string)}
       rule(:integer => simple(:integer))   {Integer(integer)}
       rule(:boolean => simple(:boolean))   {String(boolean) == "True"}
-      # rule(:mtime => simple(:x)) {DateTime.parse(String(x))}
-      # rule(:qtime => simple(:x)) {DateTime.parse(String(x))}
-      # rule(:etime => simple(:x)) {DateTime.parse(String(x))}
-      # rule(:comp_time => simple(:x)) {DateTime.parse(String(x))}
-      # rule(:start_time => simple(:x)) {"ciao"}
-      # rule(simple(:x)) { String(x) }
     end #Trans
 
 
@@ -193,7 +166,7 @@ module TORQUE
           end
         end
 
-        @last_query = results
+        @last_query = from_parselet_to_jobs(results)
     end #query
 
     def display(hash={})
@@ -203,24 +176,15 @@ module TORQUE
 
 private
 
-    # DEPRECATED using internal parlser
-    # def transform_parselet_result(results)
-    #     results.map do |raw_job|
-    #       job = Job.new
-    #       raw_job.each_pair do |key, value|
-    #         if [:ctime, :mtime, :qtime, :etime, :comp_time, :start_time].include?(key)
-    #           job.send "#{key}=", DateTime.parse(value.to_s)
-    #         elsif [:exec_port, :priority, :session_id, :start_count].include?(key)
-    #           job.send "#{key}=", value.to_i
-    #         elsif [:rerunable, :fault_tolerant].include?(key)
-    #           job.send "#{key}=", value.to_s=="True"
-    #         else
-    #           job.send "#{key}=", value.to_s
-    #         end
-    #       end #each pair
-    #       job
-    #     end #each_job
-    # end
+    def from_parselet_to_jobs(results)
+        results.map do |raw_job|
+          job = Job.new
+           raw_job.each_pair do |key, value|
+              job.send "#{key}=", value
+          end #each pair
+          job
+        end #each_job
+    end
 
     def print_jobs_table(jobs_info)  
       rows = []
