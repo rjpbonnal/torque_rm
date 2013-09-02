@@ -1,0 +1,11 @@
+%table
+  %tbody
+    - jobs.each do |job|
+      %tr
+        %td= job.job_id.split(".").first
+        %td= job.job_name
+        %td= job.node
+        %td= "#{job.memory} mb"
+        %td= "#{job.time} sec."
+        %td= job.queue
+        %td= job.job_state
