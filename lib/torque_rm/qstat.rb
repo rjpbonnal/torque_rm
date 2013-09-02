@@ -44,13 +44,15 @@ module TORQUE
     end
 
     class Parser < Parslet::Parser
-  rule(:newline) {match('\n').repeat(1)}
-  rule(:space) {match('\s').repeat}
-  rule(:space?) {space.maybe}
-  rule(:tab) {match('\t').repeat(1)}
-  rule(:newline?) {newline.maybe}
-  rule(:value) { match('[a-zA-Z0-9\.\_\@\/\+ \,\-:=]').repeat}
-  rule(:qstat) { job_id.repeat }
+  rule(:newline)          { match('\n').repeat(1) }
+  rule(:space)            { match('\s').repeat }
+  rule(:space?)           { space.maybe }
+  rule(:tab)              { match('\t').repeat(1) }
+  rule(:newline?)         { newline.maybe }
+  rule(:value)            { match('[a-zA-Z0-9\.\_\@\/\+ \,\-:=]').repeat }
+  rule(:qstat)            { job_id.repeat }
+  rule(:resource_list_name)    { str("Resource_List") >> str(".") >> (match('[a-zA-Z]').repeat(1).as(:string)).as(:name) }
+  rule(:split_assignment) { (space >> str("=") >> space).repeat(1) }
   root(:qstat)
 
   rule(:variable_item){ tab >> value >> newline }
@@ -84,9 +86,13 @@ module TORQUE
  	rule(:priority)                {(space >> str("Priority = ") >> value.as(:integer) >> newline).as(:priority)}
  	rule(:qtime)                   {(space >> str("qtime = ") >> value.as(:datetime) >> newline).as(:qtime)}
  	rule(:rerunable)               {(space >> str("Rerunable = ") >> value.as(:boolean) >> newline).as(:rerunable)}
-  rule(:resource_list_ncpus)     {(space >> str("Resource_List.ncpus = ") >> value.as(:string) >> newline).as(:resource_list_ncpus)}
- 	rule(:resource_list_nodect)    {(space >> str("Resource_List.nodect = ") >> value.as(:string) >> newline).as(:resource_list_nodect)}
- 	rule(:resource_list_nodes)     {(space >> str("Resource_List.nodes = ") >> value.as(:string) >> newline).as(:resource_list_nodes)}
+
+  rule(:resource)      {(space >> resource_list_name >> str(" = ") >> (value.as(:string)).as(:value) >> newline).as(:resource)}
+  rule(:resource_list)     { resource.repeat.as(:resource_list)}
+
+  # rule(:resource_list_ncpus)     {(space >> str("Resource_List.ncpus = ") >> value.as(:string) >> newline).as(:resource_list_ncpus)}
+ 	# rule(:resource_list_nodect)    {(space >> str("Resource_List.nodect = ") >> value.as(:string) >> newline).as(:resource_list_nodect)}
+ 	# rule(:resource_list_nodes)     {(space >> str("Resource_List.nodes = ") >> value.as(:string) >> newline).as(:resource_list_nodes)}
  	rule(:session_id)              {(space >> str("session_id = ") >> value.as(:integer) >> newline).as(:session_id)}
  	rule(:shell_path_list)         {(space >> str("Shell_Path_List = ") >> value.as(:string) >> newline).as(:shell_path_list)}
   rule(:variable_list)           {(space >> str("Variable_List = ") >> variable_list_items.as(:string) >> newline.maybe).as(:variable_list)}
@@ -102,11 +108,20 @@ module TORQUE
  	rule(:submit_host)             {(space >> str("submit_host = ") >> value.as(:string) >> newline?).as(:submit_host)}
 
 # a lot of maybe, maybe everything
-	rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
-  		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
-  		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
-  		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
-        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_ncpus.maybe >>resource_list_nodect.maybe >> resource_list_nodes.maybe >>
+	# rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
+ #  		resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
+ #  		checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
+ #  		keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
+ #        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list_ncpus.maybe >>resource_list_nodect.maybe >> resource_list_nodes.maybe >>
+ #        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
+ #        start_time .maybe>> start_count.maybe >>fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
+ #        }
+
+  rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
+      resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
+      checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
+      keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
+        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list.maybe >>
         session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
         start_time .maybe>> start_count.maybe >>fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
         }
@@ -143,8 +158,6 @@ module TORQUE
         @transformer = Trans.new
         @last_query = nil #cache last query, it can be useful to generate some kind of statistics ? 
     end #initialize
-
-
  
     # hash can contain keys:
     # type = :raw just print a string
@@ -156,8 +169,13 @@ module TORQUE
         if hash[:type] == :raw
           result.to_s
         else
-          results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
-          # results = @parser.parse(result.to_s.gsub(/\n\t/,''))
+
+          begin
+            results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
+          rescue Parslet::ParseFailed => failure
+            puts failure.cause.ascii_tree
+          end
+
           results = [] if results.is_a?(String) && results.empty?
 
           if hash.key? :job_id
