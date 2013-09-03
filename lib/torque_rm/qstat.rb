@@ -1,7 +1,14 @@
 require 'date'
-
+require 'json'
+require 'json/add/core'
 module TORQUE
   class Qstat
+    FIELDS = %w(job_id job_name job_owner resources_used_cput resources_used_mem resources_used_vmem 
+               resources_used_walltime job_state queue server checkpoint ctime error_path exec_host
+               exec_port hold_types join_path keep_files mail_points mail_users mtime output_path
+               priority qtime rerunable resource_list session_id shell_path_list variable_list etime
+               exit_status submit_args start_time start_count fault_tolerant comp_time job_radix total_runtime
+               submit_host)
     Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
            :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
            :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
@@ -53,7 +60,31 @@ module TORQUE
 				end
 				return "-"
 			end
-    end
+
+      def fields
+        FIELDS + %w( is_runnig? is_queued? is_exited? is_completed? time memory node )
+      end
+
+      def self.fields
+        FIELDS + %w( is_runnig? is_queued? is_exited? is_completed? time memory node )
+      end
+
+      alias to_hash to_h
+
+      def to_map
+        map = Hash.new
+        self.members.each { |m| map[m] = self[m] }
+        map
+      end
+
+      def to_json(*a)
+        to_map.to_json(*a)
+      end
+
+      def self.json_load(json)
+        JSON.load(json)
+      end
+    end # Job
 
     class Parser < Parslet::Parser
   rule(:newline)          { match('\n').repeat(1) }
@@ -144,6 +175,13 @@ module TORQUE
         @last_query = nil #cache last query, it can be useful to generate some kind of statistics ? 
     end #initialize
  
+    def self.fields
+      FIELDS
+    end
+
+    def fields
+      FIELDS
+    end
     # hash can contain keys:
     # type = :raw just print a string
     # job_id = job.id it will print info only about the specified job
@@ -180,15 +218,19 @@ module TORQUE
           else
             results
           end
-        end
-
         @last_query = from_parselet_to_jobs(results)
+        end
     end #query
 
     def display(hash={})
       query(hash)
       print_jobs_table(@last_query)
     end
+
+    def mock(results)
+      from_parselet_to_jobs(results)
+    end
+
 
 private
 

@@ -103,7 +103,7 @@ When a job is submitted, is possible to get some stats
       :mail_points=>"abe"@1746,
       :mtime=>"Tue Aug 27 15:56:41 2013"@1762,
       :output_path=>
-       "spark.ingm.ad:/home/helios/FirstTest.o2750"@1805,
+       "deep.space.nine:/home/helios/FirstTest.o2750"@1805,
       :priority=>"0"@1885,
       :qtime=>"Tue Aug 27 15:56:41 2013"@1899,
       :rerunable=>"True"@1940,
@@ -111,7 +111,7 @@ When a job is submitted, is possible to get some stats
       :resource_list_nodes=>"1:ppn=4"@2000,
       :shell_path_list=>"/bin/bash"@2030,
       :variable_list=>
-       "PBS_O_QUEUE=bio,PBS_O_HOST=spark.ingm.ad,PBS_O_HOME=/home/helios,PBS_O_LANG=it_IT.UTF-8,PBS_O_LOGNAME=helios,PBS_O_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/helios/.rvm/bin,PBS_O_MAIL=/var/mail/helios,PBS_O_SHELL=/bin/bash,PBS_SERVER=spark,PBS_O_WORKDIR=/home/helios\n"@2060,
+       "PBS_O_QUEUE=bio,PBS_O_HOST=deep.space.nine,PBS_O_HOME=/home/helios,PBS_O_LANG=it_IT.UTF-8,PBS_O_LOGNAME=helios,PBS_O_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/helios/.rvm/bin,PBS_O_MAIL=/var/mail/helios,PBS_O_SHELL=/bin/bash,PBS_SERVER=spark,PBS_O_WORKDIR=/home/helios\n"@2060,
       :etime=>"Tue Aug 27 15:56:41 2013"@2456,
       :submit_args=>"FirstTest.qsub"@2499,
       :fault_tolerant=>"False"@2535,
@@ -146,6 +146,29 @@ From a qsub object if submitted:
 Directly from PBS:
 
     TORQUE::Qdel.rm("2750.sun.universe.space")
+
+## REST Api
+
+All objects returned from TORQUE_RM_REST are in JSON format.
+
+### Qstat
+#### Get
+
+`/qstat` Returns an Array of Hash with the following keys, if available `"job_id","job_name","job_owner","resources_used_cput","resources_used_mem","resources_used_vmem","resources_used_walltime","job_state","queue","server","checkpoint","ctime","error_path","exec_host","exec_port","hold_types","join_path","keep_files","mail_points","mail_users","mtime","output_path","priority","qtime","rerunable","resource_list","session_id","shell_path_list","variable_list","etime","exit_status","submit_args","start_time","start_count","fault_tolerant","comp_time","job_radix","total_runtime","submit_host"` .
+
+`/qstat/fields` Returns an Array of String, the available fields for a single `qstat` query.
+
+`/qstat/all/:field` Return an Array of Strings, each String is the `field` requested by the user. If the `field` requested is not valid, it will return 404
+
+### Job
+
+`/qstat/:job_id` Returns an Hash with main key `job` and the JSON conversion of a TORQUE::Qstat::Job object. If the `job_id` does not exist will return 404
+
+`/qstat/job/fields` Returns and Hash `{"job_fields":["job_id","job_name","job_owner","resources_used_cput","resources_used_mem","resources_used_vmem","resources_used_walltime","job_state","queue","server","checkpoint","ctime","error_path","exec_host","exec_port","hold_types","join_path","keep_files","mail_points","mail_users","mtime","output_path","priority","qtime","rerunable","resource_list","session_id","shell_path_list","variable_list","etime","exit_status","submit_args","start_time","start_count","fault_tolerant","comp_time","job_radix","total_runtime","submit_host","is_runnig?","is_queued?","is_exited?","is_completed?","time","memory","node"]}` 
+
+`/qstat/:job_id/:field` Returns and Hash with a single key which is the required `field`. If the `job_id` or `field` do not exist will return 404
+
+
 
 ## Contributing to torque_rm
  

@@ -7,9 +7,11 @@ gem 'parslet'
 gem "colorize"
 gem "terminal-table"
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'shotgun'
 gem 'haml'
 gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
+# gem "awesome_print"
 # gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
