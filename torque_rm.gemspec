@@ -9,9 +9,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Raoul Jean Pierre Bonnal"]
-  s.date = "2013-08-30"
+  s.date = "2013-09-03"
   s.description = "TORQUE Resource Manager for Ruby. Submit, check and control your job directly from Ruby."
   s.email = "ilpuccio.febo@gmail.com"
+  s.executables = ["torque_rm_rest"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -24,6 +25,7 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
+    "bin/torque_rm_rest",
     "features/step_definitions/common_steps.rb",
     "features/step_definitions/qsub_steps.rb",
     "features/step_definitions/torque_rm_steps.rb",
@@ -38,7 +40,10 @@ Gem::Specification.new do |s|
     "lib/torque_rm/qsub.rb",
     "spec/spec_helper.rb",
     "spec/torque_rm_spec.rb",
-    "torque_rm.gemspec"
+    "torque_rm.gemspec",
+    "web/helpers/qstat.rb",
+    "web/views/qstat.haml",
+    "web/views/qstat_job.haml"
   ]
   s.homepage = "http://github.com/helios/torque_rm"
   s.licenses = ["MIT"]
@@ -54,6 +59,11 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<parslet>, [">= 0"])
       s.add_runtime_dependency(%q<colorize>, [">= 0"])
       s.add_runtime_dependency(%q<terminal-table>, [">= 0"])
+      s.add_runtime_dependency(%q<sinatra>, [">= 0"])
+      s.add_runtime_dependency(%q<sinatra-contrib>, [">= 0"])
+      s.add_runtime_dependency(%q<shotgun>, [">= 0"])
+      s.add_runtime_dependency(%q<haml>, [">= 0"])
+      s.add_runtime_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
@@ -64,6 +74,11 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<parslet>, [">= 0"])
       s.add_dependency(%q<colorize>, [">= 0"])
       s.add_dependency(%q<terminal-table>, [">= 0"])
+      s.add_dependency(%q<sinatra>, [">= 0"])
+      s.add_dependency(%q<sinatra-contrib>, [">= 0"])
+      s.add_dependency(%q<shotgun>, [">= 0"])
+      s.add_dependency(%q<haml>, [">= 0"])
+      s.add_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<cucumber>, [">= 0"])
@@ -75,6 +90,11 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<parslet>, [">= 0"])
     s.add_dependency(%q<colorize>, [">= 0"])
     s.add_dependency(%q<terminal-table>, [">= 0"])
+    s.add_dependency(%q<sinatra>, [">= 0"])
+    s.add_dependency(%q<sinatra-contrib>, [">= 0"])
+    s.add_dependency(%q<shotgun>, [">= 0"])
+    s.add_dependency(%q<haml>, [">= 0"])
+    s.add_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<cucumber>, [">= 0"])
