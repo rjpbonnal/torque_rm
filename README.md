@@ -190,6 +190,13 @@ A web application is under development and it will let you interact with you TOR
 
 [Sinatra](http://www.sinatrarb.com/) is the low level framework used for developing the REST API and the web infrastructure. [Twitter Bootstrap](http://getbootstrap.com/) is used to make the web app nice and fancy.
 
+### Run the Web App as a Serv(er/ice)
+
+From the command line
+
+`torque_rm_rest`
+
+click [here](http://localhost:4567/)
 
 
 
