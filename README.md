@@ -174,6 +174,23 @@ All objects returned from TORQUE_RM_REST are in JSON format.
 `/qstat/:job_id/del` Removes the `job_id` from the queue. If the `job_id` does not exist will return 404
 
 
+### Interacting from CLI
+
+To perform a query or call a fucntion use `curl` setting the content type. Extension `.json` is not considering for now, why? Read [What-is-the-correct-json-content-type](http://stackoverflow.com/questions/477816/what-is-the-correct-json-content-type) discussion on [Stackoverflow](http://stackoverflow.com/)
+
+curl -H "Content-type: application/json"  "http://localhost:4567/qstat"
+
+### WebApp
+
+A web application is under development and it will let you interact with you TORQUE/PBS server in a more fancy way, be patient and give us your feedback or request functionalities. A list of supported html pages:
+
+* get: /qstat
+
+### HowIsItMade
+
+[Sinatra](http://www.sinatrarb.com/) is the low level framework used for developing the REST API and the web infrastructure. [Twitter Bootstrap](http://getbootstrap.com/) is used to make the web app nice and fancy.
+
+
 
 
 ## Contributing to torque_rm
