@@ -40,6 +40,9 @@ get '/qstat/all/:field' do |field|
   end
 end
 
+
+### JOBS
+
 get '/qstat/:job_id' do |job_id|
 	job = TORQUE::Qstat.new.query job_id: job_id
   # q = TORQUE::Qstat.new
@@ -87,6 +90,17 @@ get '/qstat/:job_id/:field' do |job_id, field|
  #    haml :qstat_job, :format => :html5, :locals => {:job => job.first} #get the first and unique elment if the array is not empty
  #  end
 end
+
+post '/qstat/:job_id/del' do |job_id|
+  job = TORQUE::Qstat.new.query job_id: job_id
+  if job.empty?
+    return status 404
+  else
+    json job.first.del
+  end
+ 
+end
+
 
 
 __END__

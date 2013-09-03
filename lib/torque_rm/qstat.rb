@@ -16,6 +16,9 @@ module TORQUE
            :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
            :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
       #add here your custom method for Qstat::Job
+
+      alias :id :job_id
+
       def is_runnig?
         job_state == 'R'
       end
@@ -84,6 +87,13 @@ module TORQUE
       def self.json_load(json)
         JSON.load(json)
       end
+
+      def rm
+        Qdel.rm(job_id)
+      end
+      alias :del :rm
+      alias :delete :rm
+
     end # Job
 
     class Parser < Parslet::Parser
@@ -203,7 +213,7 @@ module TORQUE
           if hash.key? :job_id
             # if hash[:job_id]..is_a? String
 
-              results.select! {|j| puts j[:job_id].to_s.split(".").first; (hash[:job_id].to_s == j[:job_id] || hash[:job_id].to_s == j[:job_id].to_s.split(".").first)}
+              results.select! {|j| (hash[:job_id].to_s == j[:job_id] || hash[:job_id].to_s == j[:job_id].to_s.split(".").first)}
             # else
               # warn "You gave me #{hash[:job_id].class}, only String is supported."
             # end

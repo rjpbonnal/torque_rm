@@ -169,6 +169,11 @@ All objects returned from TORQUE_RM_REST are in JSON format.
 
 `/qstat/:job_id/:field` Returns and Hash with a single key which is the required `field`. If the `job_id` or `field` do not exist will return 404
 
+#### Post 
+
+`/qstat/:job_id/del` Removes the `job_id` from the queue. If the `job_id` does not exist will return 404
+
+
 
 
 ## Contributing to torque_rm
