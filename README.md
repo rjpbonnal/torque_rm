@@ -161,6 +161,7 @@ All objects returned from TORQUE_RM_REST are in JSON format.
 `/qstat/all/:field` Return an Array of Strings, each String is the `field` requested by the user. If the `field` requested is not valid, it will return 404
 
 ### Job
+#### Get
 
 `/qstat/:job_id` Returns an Hash with main key `job` and the JSON conversion of a TORQUE::Qstat::Job object. If the `job_id` does not exist will return 404
 
