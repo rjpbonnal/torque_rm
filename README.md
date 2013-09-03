@@ -210,6 +210,8 @@ From the command line
 
 click [here](http://localhost:4567/)
 
+Remember to configure by hand the `~/.torque_rm.yaml` as documented at the beginning
+
 
 
 ## Contributing to torque_rm
