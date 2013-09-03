@@ -46,10 +46,22 @@ or
 
 ## Configuration
 
+### byHand
+
+TORQUE_RM uses `yaml` configuration, user can create such a file in his/her home directory:
+
+    touch ~/.torque_rm.yaml
+
+and fill it with similar details:
+
+    ---
+    :hostname: deep.space.nine
+    :path: /usr/bin
+
 ### Saving
 
 It is possible to save in a configuration file `server` and `path`.
-User can sare a configuration file:
+User can save a configuration file:
 
     TORQUE.qcommands_path='/usr/bin'
     TORQUE.server = "my_grid.remote.net"
