@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'haml'
 require 'sinatra'
 require 'torque_rm'
