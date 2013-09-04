@@ -1,16 +1,24 @@
 require 'rye'
+require 'etc'
+
 module TORQUE
-  @@qcommands_path = '/usr/bin'
+  @@username = Etc.getlogin
+	@@qcommands_path = '/usr/bin'
   @@master = Rye::Box.new("localhost")
   def self.server=(hostname)
   	if hostname
-  		@@master = Rye::Box.new(hostname)
+  		@@master = Rye::Box.new(hostname,:user => @@username)
   	end
   end
 
   def self.server
   	@@master
   end
+
+	def self.username=(username)
+		@@username = username
+	end
+
 
   def self.qcommands_path=(path)
   	@@qcommands_path = path
@@ -31,9 +39,10 @@ module TORQUE
   def self.read_config(file)
   	if File.exists?(file)
   	  conf = YAML::load( File.open( file) )
-  	  self.server = conf[:hostname]
   	  self.qcommands_path = conf[:path]
-    end
+    	self.username = conf[:username]
+  	  self.server = conf[:hostname]
+		end
   end
 
   # Load configuration, default from file in user home with name .toruqe_rm.yaml
@@ -44,7 +53,7 @@ module TORQUE
 
   # Save configuration, default in user home with name .toruqe_rm.yaml
   def self.save_config(file=nil)
-  	File.write File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file), {hostname: @@master.host, path: @@qcommands_path}.to_yaml
+  	File.write File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file), {hostname: @@master.host, path: @@qcommands_path, username: @@username}.to_yaml
   end
 
   # Get the host name/ip of the local/remote server user as submitter/interface to PBS
