@@ -40,7 +40,7 @@ module TORQUE
   	if File.exists?(file)
   	  conf = YAML::load( File.open( file) )
   	  self.qcommands_path = conf[:path]
-    	self.username = conf[:username]
+    	self.username = conf[:username] unless conf[:username].nil?
   	  self.server = conf[:hostname]
 		end
   end
