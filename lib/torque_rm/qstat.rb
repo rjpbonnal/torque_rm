@@ -72,7 +72,7 @@ module TORQUE
         FIELDS + %w( is_runnig? is_queued? is_exited? is_completed? time memory node )
       end
 
-      alias to_hash to_h
+      #alias to_hash to_h
 
       def to_map
         map = Hash.new
