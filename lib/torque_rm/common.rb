@@ -5,9 +5,10 @@ module TORQUE
   @@username = Etc.getlogin
 	@@qcommands_path = '/usr/bin'
   @@master = Rye::Box.new("localhost")
+  @@conf = {}
   def self.server=(hostname)
   	if hostname
-  		@@master = Rye::Box.new(hostname,:user => @@username)
+  		@@master = Rye::Box.new(hostname, @@conf)
   	end
   end
 
@@ -39,8 +40,13 @@ module TORQUE
   def self.read_config(file)
   	if File.exists?(file)
   	  conf = YAML::load( File.open( file) )
+      @@conf = conf.dup
+      @@conf.delete(:hostname)
+      @@conf.delete(:path)
   	  self.qcommands_path = conf[:path]
-    	self.username = conf[:username] unless conf[:username].nil?
+    	self.username = conf[:user] unless conf[:user].nil?
+      # self.port = conf[:port] unless conf[:port].nil?
+      # self.password = conf[:password] unless conf[:password].nil?
   	  self.server = conf[:hostname]
 		end
   end
