@@ -59,7 +59,7 @@ module TORQUE
 
   # Save configuration, default in user home with name .toruqe_rm.yaml
   def self.save_config(file=nil)
-  	File.write File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file), {hostname: @@master.host, path: @@qcommands_path, username: @@username}.to_yaml
+  	File.write File.expand_path(file.nil? ? "~/.torque_rm.yaml" : file), {hostname: @@master.host, path: @@qcommands_path, user: @@username}.to_yaml
   end
 
   # Get the host name/ip of the local/remote server user as submitter/interface to PBS
