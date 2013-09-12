@@ -47,3 +47,7 @@ pkg
 
 # For rubinius:
 #*.rbc
+Gemfile.lock
+README.html
+lib/torque_rm/prova.rb
+lib/xxx.rb
