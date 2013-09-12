@@ -176,13 +176,13 @@ module TORQUE
       join_path.maybe >>  keep_files.maybe >> mail_points.maybe >> mail_users.maybe >> mtime.maybe >> output_path.maybe >>
       tab.maybe >> newline? >> priority.maybe >> qtime.maybe >> rerunable.maybe >> 
       resource_list.maybe >> session_id.maybe >> substate.maybe >> shell_path_list.maybe >>
-      variable_list >> 
+      variable_list.maybe >> 
       euser.maybe >> egroup.maybe >> hashname.maybe >> 
       queue_rank.maybe >> queue_type.maybe >> 
       comment.maybe >> etime.maybe >> exit_status.maybe >> 
       submit_args.maybe >> start_time .maybe >>
       walltime_remaining.maybe >> start_count.maybe >> fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> 
-      submit_host.maybe >> nppcu >>
+      submit_host.maybe >> nppcu.maybe >>
       newline?
         }
 
