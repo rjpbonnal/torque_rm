@@ -4,17 +4,19 @@ require 'json/add/core'
 module TORQUE
   class Qstat
     FIELDS = %w(job_id job_name job_owner resources_used_cput resources_used_mem resources_used_vmem 
-               resources_used_walltime job_state queue server checkpoint ctime error_path exec_host
+               resources_used_walltime job_state substate queue server checkpoint ctime error_path exec_host
                exec_port hold_types join_path keep_files mail_points mail_users mtime output_path
-               priority qtime rerunable resource_list session_id shell_path_list variable_list etime
-               exit_status submit_args start_time start_count fault_tolerant comp_time job_radix total_runtime
-               submit_host)
+               priority qtime rerunable resource_list session_id shell_path_list variable_list 
+               euser egroup hashname queue_rank queue_type comment etime
+               exit_status submit_args walltime_remaining start_time start_count fault_tolerant comp_time job_radix total_runtime
+               submit_host nppcu)
     Job = Struct.new(:job_id, :job_name, :job_owner, :resources_used_cput, :resources_used_mem, :resources_used_vmem,
-           :resources_used_walltime, :job_state, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
+           :resources_used_walltime, :job_state, :substate, :queue, :server, :checkpoint, :ctime, :error_path, :exec_host,
            :exec_port, :hold_types, :join_path, :keep_files, :mail_points, :mail_users, :mtime, :output_path,
            :priority, :qtime, :rerunable, :resource_list, :session_id,
-           :shell_path_list, :variable_list, :etime, :exit_status, :submit_args, :start_time,
-           :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host) do
+           :shell_path_list, :variable_list, :euser, :egroup, :hashname, :queue_rank, :queue_type, :comment,
+           :etime, :exit_status, :submit_args, :walltime_remaining, :start_time,
+           :start_count, :fault_tolerant, :comp_time, :job_radix, :total_runtime, :submit_host, :nppcu) do
       #add here your custom method for Qstat::Job
 
       alias :id :job_id
@@ -143,29 +145,45 @@ module TORQUE
   rule(:resource)                {(space >> resource_list_name >> str(" = ") >> (value.as(:string)).as(:value) >> newline).as(:resource)}
   rule(:resource_list)           { resource.repeat.as(:resource_list)}
 
- 	rule(:session_id)              {(space >> str("session_id = ") >> value.as(:integer) >> newline).as(:session_id)}
- 	rule(:shell_path_list)         {(space >> str("Shell_Path_List = ") >> value.as(:string) >> newline).as(:shell_path_list)}
-  rule(:variable_list)           {(space >> str("Variable_List = ") >> variable_list_items.as(:string) >> newline.maybe).as(:variable_list)}
- 	rule(:etime)                   {(space >> str("etime = ") >> value.as(:datetime) >> newline).as(:etime)}
-  rule(:exit_status)             {(space >> str("exit_status = ") >> value.as(:string) >> newline).as(:exit_status)}
- 	rule(:submit_args)             {(space >> str("submit_args = ") >> value.as(:string) >> newline).as(:submit_args)}
- 	rule(:start_time)              {(space >> str("start_time = ") >> value.as(:datetime) >> newline).as(:start_time)}
- 	rule(:start_count)             {(space >> str("start_count = ") >> value.as(:integer) >> newline).as(:start_count)}
- 	rule(:fault_tolerant)          {(space >> str("fault_tolerant = ") >> value.as(:boolean) >> newline).as(:fault_tolerant)}
-  rule(:comp_time)               {(space >> str("comp_time = ") >> value.as(:datetime) >> newline).as(:comp_time)}
- 	rule(:job_radix)               {(space >> str("job_radix = ") >> value.as(:string) >> newline).as(:job_radix)}
-  rule(:total_runtime)           {(space >> str("total_runtime = ") >> value.as(:string) >> newline).as(:total_runtime)}
+ 	rule(:session_id)              {(space >> str("session_id = ") >> value.as(:integer) >> newline?).as(:session_id)}
+  rule(:substate)                {(space >> str("substate = ") >> value.as(:integer) >> newline?).as(:substate)} # Torque 2.4.16
+ 	rule(:shell_path_list)         {(space >> str("Shell_Path_List = ") >> value.as(:string) >> newline?).as(:shell_path_list)}
+  rule(:variable_list)           {(space >> str("Variable_List = ") >> variable_list_items.as(:string) >> newline?).as(:variable_list)}
+  rule(:euser)                   {(space >> str("euser = ") >> value.as(:string) >> newline?).as(:euser)} # Torque 2.4.16
+  rule(:egroup)                  {(space >> str("egroup = ") >> value.as(:string) >> newline?).as(:egroup)} # Torque 2.4.16
+  rule(:hashname)                {(space >> str("hashname = ") >> value.as(:string) >> newline?).as(:hashname)} # Torque 2.4.16
+  rule(:queue_rank)              {(space >> str("queue_rank = ") >> value.as(:string) >> newline?).as(:queue_rank)} # Torque 2.4.16
+  rule(:queue_type)              {(space >> str("queue_type = ") >> value.as(:string) >> newline?).as(:queue_type)} # Torque 2.4.16
+  rule(:comment)                 {(space >> str("comment = ") >> value.as(:string) >> newline?).as(:comment)} # Torque 2.4.16
+ 	rule(:etime)                   {(space >> str("etime = ") >> value.as(:datetime) >> newline?).as(:etime)}
+  rule(:exit_status)             {(space >> str("exit_status = ") >> value.as(:string) >> newline?).as(:exit_status)}
+ 	rule(:submit_args)             {(space >> str("submit_args = ") >> value.as(:string) >> newline?).as(:submit_args)}
+ 	rule(:start_time)              {(space >> str("start_time = ") >> value.as(:datetime) >> newline?).as(:start_time)}
+  rule(:walltime_remaining)      {(space >> str("Walltime.Remaining = ") >> value.as(:integer) >> newline?).as(:walltime_remaining)} # Torque 2.4.16
+ 	rule(:start_count)             {(space >> str("start_count = ") >> value.as(:integer) >> newline?).as(:start_count)}
+ 	rule(:fault_tolerant)          {(space >> str("fault_tolerant = ") >> value.as(:boolean) >> newline?).as(:fault_tolerant)}
+  rule(:comp_time)               {(space >> str("comp_time = ") >> value.as(:datetime) >> newline?).as(:comp_time)}
+ 	rule(:job_radix)               {(space >> str("job_radix = ") >> value.as(:string) >> newline?).as(:job_radix)}
+  rule(:total_runtime)           {(space >> str("total_runtime = ") >> value.as(:string) >> newline?).as(:total_runtime)}
  	rule(:submit_host)             {(space >> str("submit_host = ") >> value.as(:string) >> newline?).as(:submit_host)}
+  rule(:nppcu)                   {(space >> str("nppcu = ") >> value.as(:integer) >> newline?).as(:nppcu)} #Torque 4.2.5 / Maui 3.3.1
 
 # a lot of maybe, maybe everything
 
   rule(:fields) { job_name.maybe >> job_owner.maybe >> resources_used_cput.maybe >> resources_used_mem.maybe >> 
-      resources_used_vmem.maybe >> resources_used_walltime.maybe >> job_state.maybe >> queue.maybe  >> server.maybe >> 
-      checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> join_path.maybe >>
-      keep_files.maybe >> mail_points.maybe >> mail_users? >> mtime.maybe >> output_path.maybe >> tab.maybe >> newline? >>
-        priority.maybe >> qtime.maybe >> rerunable.maybe >> resource_list.maybe >>
-        session_id.maybe >> shell_path_list.maybe >> variable_list >> etime.maybe >> exit_status.maybe >> submit_args.maybe >>
-        start_time .maybe>> start_count.maybe >>fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> submit_host.maybe >> newline?
+       resources_used_vmem.maybe >> resources_used_walltime.maybe >>  job_state.maybe >> queue.maybe  >> server.maybe >> 
+      checkpoint.maybe >> ctime.maybe >> error_path.maybe >> exec_host.maybe >> exec_port.maybe >> hold_types.maybe  >> 
+      join_path.maybe >>  keep_files.maybe >> mail_points.maybe >> mail_users.maybe >> mtime.maybe >> output_path.maybe >>
+      tab.maybe >> newline? >> priority.maybe >> qtime.maybe >> rerunable.maybe >> 
+      resource_list.maybe >> session_id.maybe >> substate.maybe >> shell_path_list.maybe >>
+      variable_list >> 
+      euser.maybe >> egroup.maybe >> hashname.maybe >> 
+      queue_rank.maybe >> queue_type.maybe >> 
+      comment.maybe >> etime.maybe >> exit_status.maybe >> 
+      submit_args.maybe >> start_time .maybe >>
+      walltime_remaining.maybe >> start_count.maybe >> fault_tolerant.maybe >> comp_time.maybe >> job_radix.maybe >> total_runtime.maybe >> 
+      submit_host.maybe >> nppcu >>
+      newline?
         }
 
 
@@ -204,6 +222,8 @@ module TORQUE
         else
 
           begin
+            # puts result.to_s.inspect
+            # puts result.to_s.gsub(/\n\t/,'').inspect
             results = @transformer.apply(@parser.parse(result.to_s.gsub(/\n\t/,'')))
           rescue Parslet::ParseFailed => failure
             puts failure.cause.ascii_tree
