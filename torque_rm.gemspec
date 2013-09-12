@@ -9,12 +9,13 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Raoul Jean Pierre Bonnal"]
-  s.date = "2013-09-03"
+  s.date = "2013-09-12"
   s.description = "TORQUE Resource Manager for Ruby. Submit, check and control your job directly from Ruby."
   s.email = "ilpuccio.febo@gmail.com"
   s.executables = ["torque_rm_rest"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
+    "README.html",
     "README.md"
   ]
   s.files = [
@@ -48,7 +49,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/helios/torque_rm"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "2.0.0"
+  s.rubygems_version = "2.0.6"
   s.summary = "TORQUE Resource Manager wrapper for Ruby"
 
   if s.respond_to? :specification_version then
