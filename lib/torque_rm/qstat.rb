@@ -55,43 +55,13 @@ module TORQUE
     class Job < EnanchedOpenStruct
       #add here your custom method for Qstat::Job
 
-      # alias :id :job_id
 
-      # def initialize(*args)
-      #   super(*args)
-      #   each_pair do |k,v|
-      #     if k.to_s =~ /time/ && v.is_a?(String) && v =~ (/^[0-9]+$/)
-      #       send "#{k}=", Time.at(v.to_i).to_datetime
-      #     elsif v =~ (/(true)$/i)
-      #       send "#{k}=", true
-      #     elsif v =~ (/(false)$/i)
-      #       send "#{k}=", false
-      #     elsif v =~ (/^[0-9]+$/)
-      #       send "#{k}=", v.to_i
-      #     elsif v.is_a? Hash
-      #       send "#{k}=", OpenStruct.new(v)
-      #     end
-
-      #   end
-      #   each_pair do |k,v|
-      #     unless k == k.downcase
-      #       original=k.to_sym
-      #       newer=k.downcase.to_sym
-      #       class_eval do
-
-      #         alias_method newer, original 
-      #         # define_method newer do
-      #         #   send original
-      #         # end
-
-      #         alias_method "#{newer}=", "#{original}="
-      #         # define_method "#{newer}=" do
-      #         #   send "#{original}="
-      #         # end
-      #       end
-      #     end
-      #   end
-      # end
+      def initialize(*args)
+        super(*args)
+        class_eval do
+          alias_method :id, :job_id
+        end
+      end
 
       def is_runnig?
         job_state == 'R'
