@@ -23,6 +23,14 @@ module TORQUE
     class EnanchedOpenStruct < OpenStruct
       def initialize(*args)
         super(*args)
+        casting
+        alias_case_insensitive_methods
+      end
+
+      private
+
+      # Cast generic types from string to most near type selected by pattern matching
+      def casting
         each_pair do |k,v| #converting
           if v =~ (/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/)
             send "#{k}=", Time.parse(v)
@@ -37,8 +45,10 @@ module TORQUE
           elsif v.is_a? Hash
             send "#{k}=", EnanchedOpenStruct.new(v)
           end
-        end #each pair
+        end #each pair        
+      end #casting
 
+      def alias_case_insensitive_methods
         each_pair do |k,v| #adding methods
           unless k == k.downcase
             original=k.to_sym
@@ -50,6 +60,7 @@ module TORQUE
           end
         end
       end
+
     end
 
     class Job < EnanchedOpenStruct
