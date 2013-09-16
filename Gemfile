@@ -11,6 +11,7 @@ gem 'sinatra-contrib'
 gem 'shotgun'
 gem 'haml'
 gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
+gem 'activesupport'
 # gem "awesome_print"
 # gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 # Add dependencies to develop your gem here.
