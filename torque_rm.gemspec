@@ -5,16 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = "torque_rm"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Raoul Jean Pierre Bonnal"]
-  s.date = "2013-09-16"
+  s.date = "2013-09-17"
   s.description = "TORQUE Resource Manager for Ruby. Submit, check and control your job directly from Ruby."
   s.email = "ilpuccio.febo@gmail.com"
   s.executables = ["torque_rm_rest"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
+    "README.html",
     "README.md"
   ]
   s.files = [
