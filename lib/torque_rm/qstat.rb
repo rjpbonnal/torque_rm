@@ -96,11 +96,11 @@ module TORQUE
       alias is_in_queue? is_queued?
 
       def time
-				return (resources_used.walltime) ? resources_used.walltime : "-"
+				return (resources_used && resources_used.walltime) ? resources_used.walltime : "-"
       end
 
       def memory
-        resources_used.mem ? (resources_used.mem.split("kb").first.to_f/1000).round(1) : "0"
+        (resources_used && resources_used.mem) ? (resources_used.mem.split("kb").first.to_f/1000).round(1) : "0"
       end
 
       def node 
