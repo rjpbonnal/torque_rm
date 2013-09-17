@@ -342,7 +342,7 @@ private
       headings = head.map {|h| {:value => h, :alignment => :center}}
       if jobs_info.empty?
         print "\n\nNo Running jobs for user: ".light_red+"#{`whoami`}".green+"\n\n"
-      	exit
+      	# exit
 			else
         jobs_info.each do |job|
           line = [job.job_id.split(".").first,job.job_name,job.node,job.procs,"#{job.memory} mb","#{job.time}",job.queue,job.job_state]
