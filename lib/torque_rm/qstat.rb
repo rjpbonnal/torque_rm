@@ -31,7 +31,7 @@ module TORQUE
 
       # Cast generic types from string to most near type selected by pattern matching
       def casting
-        each_pair do |k,v| #converting
+        @table.each_pair do |k,v| #converting
           if v =~ (/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/)
             send "#{k}=", Time.parse(v)
           elsif k.to_s =~ /time/ && v.is_a?(String) && v =~ (/^[0-9]+$/)
@@ -49,7 +49,7 @@ module TORQUE
       end #casting
 
       def alias_case_insensitive_methods
-        each_pair do |k,v| #adding methods
+        @table.each_pair do |k,v| #adding methods
           unless k == k.downcase
             original=k.to_sym
             newer=k.downcase.to_sym
