@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "torque_rm"
-  s.version = "0.2.2"
+  s.version = "0.2.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Raoul Jean Pierre Bonnal"]
-  s.date = "2013-09-17"
+  s.date = "2013-09-18"
   s.description = "TORQUE Resource Manager for Ruby. Submit, check and control your job directly from Ruby."
   s.email = "ilpuccio.febo@gmail.com"
   s.executables = ["torque_rm_rest"]
@@ -44,7 +44,9 @@ Gem::Specification.new do |s|
     "torque_rm.gemspec",
     "web/helpers/qstat.rb",
     "web/views/qstat.haml",
-    "web/views/qstat_job.haml"
+    "web/views/qstat_job.haml",
+    "web/views/qsub.haml",
+    "web/views/qsub_submit.haml"
   ]
   s.homepage = "http://github.com/helios/torque_rm"
   s.licenses = ["MIT"]
