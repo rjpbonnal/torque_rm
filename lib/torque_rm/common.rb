@@ -20,6 +20,15 @@ module TORQUE
 		@@username = username
 	end
 
+  def self.username
+    @@username
+  end
+
+  def self.user
+    @@username
+  end
+
+
 
   def self.qcommands_path=(path)
   	@@qcommands_path = path
@@ -71,4 +80,5 @@ module TORQUE
   def self.hostname
   	self.server.hostname
   end
+
 end

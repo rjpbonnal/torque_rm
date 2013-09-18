@@ -169,6 +169,7 @@ module TORQUE
     # :dry => true will only transfer the file to the destination server and will not submit the job to the scheduler
     #    the job object will not have an id associated. 
     def submit(opts={dry: false})
+      puts script_absolute_filename
       TORQUE.server.file_upload StringIO.new(to_s), script_absolute_filename
       @id = TORQUE.server.qsub(script_absolute_filename).first unless opts[:dry] == true
     end
@@ -221,7 +222,7 @@ module TORQUE
     # if root or working directories are not defined the user home directory is
     # the default directory
     def script_dir
-      root_directory || working_directory || '~'
+      root_directory || working_directory || user_directory
     end
 
     def script_filename
@@ -230,6 +231,14 @@ module TORQUE
 
     def script_absolute_filename
       File.join(script_dir,script_filename)
+    end
+
+    def user_directory
+      if run_as_user
+        File.join("/home",run_as_user)
+      elsif TORQUE.username
+        File.join("/home",TORQUE.username)
+      end
     end
 
 
