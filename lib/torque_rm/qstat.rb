@@ -285,13 +285,13 @@ module TORQUE
               end # do
               if hash.key? :job_id
                 # if hash[:job_id]..is_a? String
-                  jobs.select! {|job| (hash[:job_id].to_s == job.job_id || hash[:job_id].to_s == job.job_id.split(".").first)}
+                  jobs.select {|job| (hash[:job_id].to_s == job.job_id || hash[:job_id].to_s == job.job_id.split(".").first)}
                 # else
                   # warn "You gave me #{hash[:job_id].class}, only String is supported."
                 # end
               elsif hash.key? :job_ids
                 if hash[:job_ids].is_a? Array
-                  jobs.select! {|job| (hash[:job_ids].include?(job.job_id) || hash[:job_ids].include?(job.job_id.split(".").first))}
+                  jobs.select {|job| (hash[:job_ids].include?(job.job_id) || hash[:job_ids].include?(job.job_id.split(".").first))}
                 elsif hash[:job_ids].is_a? String
                   warn "To be implemented for String object."
                 else

@@ -5,7 +5,9 @@
   %tbody
     - jobs.each do |job|
       %tr{job_line_color(job)}
-        %td= job.job_id.split(".").first
+        %td
+          %a{:href=>"qstat/#{job.job_id.split(".").first}"}
+            = job.job_id.split(".").first
         %td= job.job_name
         %td= job.node
         %td= "#{job.memory} mb"
