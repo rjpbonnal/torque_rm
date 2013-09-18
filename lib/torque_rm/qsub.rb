@@ -16,10 +16,10 @@ module TORQUE
   
   class Qsub
   	attr_accessor :a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l
-  	attr_accessor :m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z, :script
+  	attr_accessor :m,:M,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z, :script
   	attr_accessor :walltime,:gres,:ppn, :procs
     attr_accessor :id
-  	attr_writer :nodes
+  	attr_writer :nodes, :N
 
     # def script(*args)
     #   if args.size == 1
@@ -28,6 +28,14 @@ module TORQUE
     #     @script
     #   end
     # end
+
+    def N
+      if @N.nil?
+        @N = SecureRandom.urlsafe_base64(20)
+      else
+        @N
+      end
+    end
 
 
     alias :cpus :ppn
@@ -169,7 +177,6 @@ module TORQUE
     # :dry => true will only transfer the file to the destination server and will not submit the job to the scheduler
     #    the job object will not have an id associated. 
     def submit(opts={dry: false})
-      puts script_absolute_filename
       TORQUE.server.file_upload StringIO.new(to_s), script_absolute_filename
       @id = TORQUE.server.qsub(script_absolute_filename).first unless opts[:dry] == true
     end
@@ -225,6 +232,7 @@ module TORQUE
       root_directory || working_directory || user_directory
     end
 
+    # in case name of the job has not been specified, it will be generated randomly
     def script_filename
       "#{name}.pbs"
     end
