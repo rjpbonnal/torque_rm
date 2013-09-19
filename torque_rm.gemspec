@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "torque_rm"
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Raoul Jean Pierre Bonnal"]
-  s.date = "2013-09-18"
+  s.date = "2013-09-19"
   s.description = "TORQUE Resource Manager for Ruby. Submit, check and control your job directly from Ruby."
   s.email = "ilpuccio.febo@gmail.com"
   s.executables = ["torque_rm_rest"]
@@ -51,7 +51,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/helios/torque_rm"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "2.0.6"
+  s.rubygems_version = "2.0.7"
   s.summary = "TORQUE Resource Manager wrapper for Ruby"
 
   if s.respond_to? :specification_version then
@@ -68,6 +68,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<haml>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
+      s.add_runtime_dependency(%q<time_diff>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
@@ -84,6 +85,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<haml>, [">= 0"])
       s.add_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 0"])
+      s.add_dependency(%q<time_diff>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<cucumber>, [">= 0"])
@@ -101,6 +103,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<haml>, [">= 0"])
     s.add_dependency(%q<sinatra-twitter-bootstrap>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 0"])
+    s.add_dependency(%q<time_diff>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<cucumber>, [">= 0"])
