@@ -3,6 +3,7 @@ require 'time'
 require 'json'
 require 'json/add/core'
 require 'ostruct'
+require 'time_diff'
 
 module TORQUE
   class Qstat
@@ -33,7 +34,9 @@ module TORQUE
       def casting
         @table.each_pair do |k,v| #converting
           if v =~ (/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/)
-            send "#{k}=", Time.parse(v)
+            hours,minutes,seconds = v.split(':')
+            now = Time.now
+            send "#{k}=", Time.diff(now, now-((hours.to_i/24)*(24*3600))-((hours.to_i%24)*3600)-(minutes.to_i*60)-(seconds.to_i)) #time_diff object
           elsif k.to_s =~ /time/ && v.is_a?(String) && v =~ (/^[0-9]+$/)
             send "#{k}=", Time.at(v.to_i).to_datetime
           elsif v =~ (/(true)$/i)
@@ -96,7 +99,7 @@ module TORQUE
       alias is_in_queue? is_queued?
 
       def time
-				return (resources_used && resources_used.walltime) ? resources_used.walltime : "-"
+				return (resources_used && resources_used.walltime) ? resources_used.walltime[:diff] : "-" #using time_diff it prints a nice report in case of more than 1 day
       end
 
       def memory
@@ -111,7 +114,11 @@ module TORQUE
 				if resource_list.ncpus
 					return resource_list.ncpus
 				elsif resource_list.nodes
-					return resource_list.nodes.split("ppn=")[-1]
+          if resource_list.nodes.is_a? String
+					  return resource_list.nodes.split("ppn=")[-1]
+          else
+            return resource_list.nodes
+          end
 				else
     			return "-"
         end
