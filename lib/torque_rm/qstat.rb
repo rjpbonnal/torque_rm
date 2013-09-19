@@ -114,7 +114,11 @@ module TORQUE
 				if resource_list.ncpus
 					return resource_list.ncpus
 				elsif resource_list.nodes
-					return resource_list.nodes.split("ppn=")[-1]
+          if resource_list.nodes.is_a? String
+					  return resource_list.nodes.split("ppn=")[-1]
+          else
+            return resource_list.nodes
+          end
 				else
     			return "-"
         end
