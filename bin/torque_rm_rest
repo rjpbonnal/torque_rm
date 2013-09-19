@@ -152,4 +152,4 @@ __END__
         - span8 do
           = yield
         - span4 :offset => 4 do
-          footer
+          Raoul J.P. Bonnal & Francesco Strozzi, licence to be defined ^_^
