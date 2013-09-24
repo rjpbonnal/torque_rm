@@ -1,81 +1,81 @@
 %form{:role=>"form", :method=> "post", :action=>"/submit"}
-  %fieldset.form-inline
-    %div.form-group
-      %label.control-label{:for=>"name"} Job Name
-      %input.form-control{:type=>"text", :id=>"name", :name=>"name", :placeholder=>"Job Name"}
-    %div.form-group
-      %label.control-label{:for=>"queue"} Destination Queue
-      %input.form-control{:type=>"text", :id=>"queue", :name=>"queue", :placeholder=>"The destination names a queue, a server, or a queue at a server."}
-
-  %label.control-label Directories  
-  %fieldset.form-inline
-    %div.form-group
-      %label.sr-only{:for=>"working_directory"} Working Directory
-      %input.form-control{:type=>"text", :id=>"working_directory", :name=>"working_directory",:placeholder=>"Working Directory"}
-    %div.form-group
-      %label.sr-only{:for=>"root_directory"} Root Directory
-      %input.form-control{:type=>"text", :id=>"root_directory", :name=>"root_directory",:placeholder=>"Root Directory"}
-    %div.form-group
-      %label.sr-only{:for=>"stderr"} Stderr Path
-      %input.form-control{:type=>"text", :id=>"stderr", :name=>"stderr", :placeholder=>"Stderr Path"}
-    %div.form-group
-      %label.sr-only{:for=>"stdout"} Stdout Path
-      %input.form-control{:type=>"text", :id=>"stdout", :name=>"stdout",:placeholder=>"Stdout Path"}
-
-
-
-  %label.control-label Shell And Variables
-  %fieldset.form-inline
-    %div.form-group
-      %label.sr-only{:for=>"shell"} Shell Path
-      %input.form-control{:type=>"text", :id=>"shell", :name=>"shell", :value=>"/usr/bin/bash", :placeholder=>"shell path"}
-    %div.form-group
-      %label.sr-only{:for=>"variable_list"} Variable List
-      %input.form-control{:type=>"text", :id=>"variable_list", :name=>"variable_list", :placeholder=>"Expands the list of environment variables that are exported to the job."}
-    %div.form-group
-      %label.sr-only{:for=>"additional_attributes"} Additional Attributes
-      %input.form-control{:type=>"text", :id=>"additional_attributes", :name=>"additional_attributes", :placeholder=>"Additional attributes: attr_name=attr_value[,attr_name=attr_value...]"}
-
-  %fieldset.form-inline
-    %div.form-group
-      %label.control-label{:for=>"resource_list"} Resource List
-      %input.form-control{:type=>"text", :id=>"resource_list", :name=>"resource_list", :placeholder=>"nodes=2:ppn=2"}
-
-  %div.row
-    %div.col-md-7
+  %div.col-md-9
+    %fieldset.form-inline
       %div.form-group
-      %label.control-label{:for=>"script"} Linux Script
-      %textarea.form-control{:rows=>15, :id=>"script", :name=>"script", :placeholder=>"Linux Script"}
-      %button{:type=>"submit", :class=>"btn btn-primary"} Submit
+        %label.control-label{:for=>"name"} Job Name
+        %input.form-control{:type=>"text", :id=>"name", :name=>"name", :placeholder=>"Job Name"}
+      %div.form-group
+        %label.control-label{:for=>"queue"} Destination Queue
+        %input.form-control{:type=>"text", :id=>"queue", :name=>"queue", :placeholder=>"The destination names a queue, a server, or a queue at a server."}
 
-    %div.col-md-2
-      %label Optional Flags
-      %div.checkbox
-        %label
-          %input{:type=>"checkbox", :id=>"join", :name=>"join"} Join Outputs
-        %label
-          %input{:type=>"checkbox", :id=>"fault_tollerant",:name=>"fault_tollerant"} Fault Tollerant
-        %label
-          %input{:type=>"checkbox", :id=>"uer_hold", :name=>"uer_hold"} User Hold Submission
-        %label
-          %input{:type=>"checkbox", :id=>"interactive", :name=>"interactive"} Job Run as Interactive
-        %label
-          %input{:type=>"checkbox", :id=>"exports", :name=>"exports"} Export Variables to Batch Job
+    %label.control-label Directories  
+    %fieldset.form-inline
+      %div.form-group
+        %label.sr-only{:for=>"working_directory"} Working Directory
+        %input.form-control{:type=>"text", :id=>"working_directory", :name=>"working_directory",:placeholder=>"Working Directory"}
+      %div.form-group
+        %label.sr-only{:for=>"root_directory"} Root Directory
+        %input.form-control{:type=>"text", :id=>"root_directory", :name=>"root_directory",:placeholder=>"Root Directory"}
+      %div.form-group
+        %label.sr-only{:for=>"stderr"} Stderr Path
+        %input.form-control{:type=>"text", :id=>"stderr", :name=>"stderr", :placeholder=>"Stderr Path"}
+      %div.form-group
+        %label.sr-only{:for=>"stdout"} Stdout Path
+        %input.form-control{:type=>"text", :id=>"stdout", :name=>"stdout",:placeholder=>"Stdout Path"}
 
-    %div.col-md-3
-      %label.select{:for=>"keep"} Keep Ouput/Error on Host
-      %select.form-control.input-sm{:id=>"keep", :name=>"keep"}        
-        %option{:value=>''}
-        %option{:value=>'e'}  only standard error
-        %option{:value=>'o'}  only standard output
-        %option{:value=>'eo'} both
-        %option{:value=>'n'}  none
-      %label.select{:for=>"rerunnable"} Rerunnable
-      %select.form-control.input-sm{:id=>"rerunnable", :name=>"rerunnable"}
-        %option{:value=>''}
-        %option{:value=>'y'} Yes
-        %option{:value=>'n'} No
 
+
+    %label.control-label Shell And Variables
+    %fieldset.form-inline
+      %div.form-group
+        %label.sr-only{:for=>"shell"} Shell Path
+        %input.form-control{:type=>"text", :id=>"shell", :name=>"shell", :value=>"/usr/bin/bash", :placeholder=>"shell path"}
+      %div.form-group
+        %label.sr-only{:for=>"variable_list"} Variable List
+        %input.form-control{:type=>"text", :id=>"variable_list", :name=>"variable_list", :placeholder=>"Expands the list of environment variables that are exported to the job."}
+      %div.form-group
+        %label.sr-only{:for=>"additional_attributes"} Additional Attributes
+        %input.form-control{:type=>"text", :id=>"additional_attributes", :name=>"additional_attributes", :placeholder=>"Additional attributes: attr_name=attr_value[,attr_name=attr_value...]"}
+
+    %fieldset.form-inline
+      %div.form-group
+        %label.control-label{:for=>"resource_list"} Resource List
+        %input.form-control{:type=>"text", :id=>"resource_list", :name=>"resource_list", :placeholder=>"nodes=2:ppn=2"}
+
+    %div.row
+      %div.col-md-9
+        %div.form-group
+        %label.control-label{:for=>"script"} Linux Script
+        %textarea.form-control{:rows=>15, :id=>"script", :name=>"script", :placeholder=>"Linux Script"}
+        %button{:type=>"submit", :class=>"btn btn-primary"} Submit
+
+      %div.col-md-3
+        %div.form-group
+          %label.control-label{:for=>"uno"} Optional Flags
+          %div.checkbox#uno
+            %label
+              %input{:type=>"checkbox", :id=>"join", :name=>"join"} Join Outputs
+            %label
+              %input{:type=>"checkbox", :id=>"fault_tollerant",:name=>"fault_tollerant"} Fault Tollerant
+            %label
+              %input{:type=>"checkbox", :id=>"uer_hold", :name=>"uer_hold"} User Hold Submission
+            %label
+              %input{:type=>"checkbox", :id=>"interactive", :name=>"interactive"} Job Run as Interactive
+            %label
+              %input{:type=>"checkbox", :id=>"exports", :name=>"exports"} Export Variables to Batch Job
+  %div.col-md-3
+    %label.select{:for=>"keep"} Keep Ouput/Error on Host
+    %select.form-control.input-sm{:id=>"keep", :name=>"keep"}        
+      %option{:value=>''}
+      %option{:value=>'e'}  only standard error
+      %option{:value=>'o'}  only standard output
+      %option{:value=>'eo'} both
+      %option{:value=>'n'}  none
+    %label.select{:for=>"rerunnable"} Rerunnable
+    %select.form-control.input-sm{:id=>"rerunnable", :name=>"rerunnable"}
+      %option{:value=>''}
+      %option{:value=>'y'} Yes
+      %option{:value=>'n'} No
     %fieldset
       %div.form-group
         %label.control-label{:for=>"mail_options"} Mail Options
