@@ -1,4 +1,4 @@
 %p
   Your job has been submitted with id 
-  %a{:href=>"qstat/#{job_id.split(".").first}"}
-    = job_id.split(".").first
+  %pre
+    %code= job.to_s

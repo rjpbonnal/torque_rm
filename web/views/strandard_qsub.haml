@@ -1,0 +1,112 @@
+%form{:class=>"form-horizontal", :method=> "post", :action=>"/submit"}
+  %div{:class=>"row"}
+    %div{:class=>"span12"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"name"} Job Name
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"name", :name=>"name", :placeholder=>"Job Name"}
+  %div{:class=>"row"}
+    %div{:class=>"span12"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"working_directory"} Working Directory
+        %div{:class=>"controls controls-row"}
+          %input{:span=>6, :type=>"text", :id=>"working_directory", :name=>"working_directory",:placeholder=>"Working Directory"}
+          %input{:span=>6, :type=>"text", :id=>"root_directory", :name=>"root_directory",:placeholder=>"Root Directory"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"root_directory"} Root Directory
+        %div{:class=>"controls controls-row"}
+          
+  %div{:class=>"row"}
+    %div{:class=>"span4"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"stderr"} Stderr Path
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"stderr", :name=>"stderr", :placeholder=>"Stderr Path"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"stdout"} Stdout Path
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"stdout", :name=>"stdout",:placeholder=>"Stdout Path"}
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"checkbox"} 
+          %input{:type=>"checkbox", :id=>"fault_tollerant",:name=>"fault_tollerant"} Fault Tollerant
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"checkbox"} 
+          %input{:type=>"checkbox", :id=>"uer_hold", :name=>"uer_hold"} User Hold Submission
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"checkbox"} 
+          %input{:type=>"checkbox", :id=>"interactive", :name=>"interactive"} Job Run as Interactive
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"checkbox"} 
+          %input{:type=>"checkbox", :id=>"join", :name=>"join"} Join Outputs
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}      
+          %label{:class=>"select"} Keep
+          %select{:id=>"keep", :name=>"keep"}
+            %option{:value=>'e'} standard error
+            %option{:value=>'o'} standard output
+            %option{:value=>'eo'} both
+            %option{:value=>'n'} none
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"resource_list"} Resource List
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"resource_list", :name=>"resource_list", :placeholder=>"nodes=2:ppn=60"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"mail_options"} Mail Options
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"mail_options", :name=>"mail_options", :placeholder=>"abe"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"user_list"} Mail User List
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"user_list", :name=>"user_list", :placeholder=>"john@deep.space.nine.org, doe@deep.speace.nine.org"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"priority"} Job Priority
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"priority", :name=>"priority", :placeholder=>"between -1024 and +1023 inclusive"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"root_as_user"} Execute as user
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"root_as_user", :name=>"root_as_user", :placeholder=>"user[:group]"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"queue"} Destination Queue
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"queue", :name=>"queue", :placeholder=>"The destination names a queue, a server, or a queue at a server."}
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}      
+          %label{:class=>"select"} Rerunnable
+          %select{:id=>"rerunnable", :name=>"rerunnable"}
+            %option{:value=>'y'} Yes
+            %option{:value=>'n'} No
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"shell"} Shell
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"shell", :name=>"shell", :placeholder=>"path list"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"array_request"} Task Array
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"array_request", :name=>"array_request", :placeholder=>"array_request"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"user_list"} Execution User
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"user_list", :name=>"user_list", :placeholder=>"user[@host][,user[@host],...]"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"variable_list"} Variable List
+        %div{:class=>"controls"}
+          %input{:type=>"text", :id=>"variable_list", :name=>"variable_list", :placeholder=>"Expands the list of environment variables that are exported to the job."}
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"checkbox contro-label"}
+          %input{:type=>"checkbox", :id=>"exports", :name=>"exports"} Export Variables to Batch Job
+      %div{:class=>"control-group"}
+        %div{:class=>"controls"}
+          %label{:class=>"control-label", :for=>"additional_attributes"} Additional Attributes
+          %input{:type=>"text", :id=>"additional_attributes", :name=>"additional_attributes", :placeholder=>"attr_name=attr_value[,attr_name=attr_value...]"}
+    %div{:class=>"span8"}
+      %div{:class=>"control-group"}
+        %label{:class=>"control-label", :for=>"script"} Linux Script
+        %div{:class=>"controls"}
+          %textarea{:rows=>15, :class=>"input-xxlarge", :id=>"script", :name=>"script", :placeholder=>"Linux Script"}
+          %button{:type=>"submit", :class=>"btn btn-primary"} Submit

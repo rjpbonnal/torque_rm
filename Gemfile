@@ -10,7 +10,7 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'shotgun'
 gem 'haml'
-gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
+#gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 gem 'activesupport'
 gem 'time_diff'
 # gem "awesome_print"

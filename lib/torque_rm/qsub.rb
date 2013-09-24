@@ -76,6 +76,26 @@ module TORQUE
     alias :exports= :V=
     alias :additional_attributes :X
     alias :additional_attributes= :X=
+    alias :join :j
+    alias :join= :j=
+    alias :resource_list :l
+    alias :resource_list= :l=
+    alias :interactive :I
+    alias :interactive= :I=
+    alias :user_hold :h
+    alias :user_hold= :h=
+    alias :fault_tolerant :f
+    alias :fault_tolerant= :f=
+    alias :mail_options :m
+    alias :mail_options= :m=
+    alias :user_list :M
+    alias :user_list= :M=
+    alias :priority :p
+    alias :priority= :p=
+    alias :root_as_user :P
+    alias :root_as_user= :P=
+    alias :array_request :t
+    alias :array_request= :t=
 
   	def initialize(opts={}, &block)
       @id = nil # configure when the job is submitted
@@ -161,11 +181,17 @@ module TORQUE
 
   	def to_s
   	  pbs_script = ""
-  	  [:a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l,:m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z].each do |option|
+      #option with an associated value
+  	  [:a, :A,:b,:c,:C,:d,:D,:e,:j,:k,:l,:m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:W].each do |option|
   	  	value = send(option)
   	  	pbs_script << "#PBS -#{option} #{value}\n" unless value.nil?
   	  end
-  	  pbs_script << "#{script}" unless script.nil?
+      #options which must only be declared
+      [:f, :h, :I, :V, :X, :z].each do |option|
+        value = send(option)
+        pbs_script << "#PBS -#{option}\n" unless (value.nil? || ["false","0","n","no"].include?(value.to_s.downcase))
+      end
+  	  pbs_script << "#{script.gsub(/\r\n/, "\n")}" unless script.nil?
   	  if script.nil?
   	  	warn("You are converting this qsub job into a script without a real code.")
   	  end
@@ -269,7 +295,7 @@ module TORQUE
   	end
 
   	def validate_mail_options(opts)
-  		value = opts[:m] || [opts[:send_on_abort], opts[:send_on_begin], opts[:send_on_end]].select{|item| item}.join
+  		value = opts[:m] || opts[:mail_options] || [opts[:send_on_abort], opts[:send_on_begin], opts[:send_on_end]].select{|item| item}.join
       value.empty? ? nil : value 
   	end
 

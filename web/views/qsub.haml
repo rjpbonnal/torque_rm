@@ -1,130 +1,98 @@
-%form{:class=>"form-horizontal",:method=> "post", :action=>"submit"}
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"job_name"} Job Name
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"job_name", :placeholder=>"Job Name"}
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"working_directory"} Working Directory
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"working_directory", :placeholder=>"Working Directory"}
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"root_directory"} Root Directory
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"root_directory", :placeholder=>"Root Directory"}
+%form{:role=>"form", :method=> "post", :action=>"/submit"}
+  %fieldset.form-inline
+    %div.form-group
+      %label.control-label{:for=>"name"} Job Name
+      %input.form-control{:type=>"text", :id=>"name", :name=>"name", :placeholder=>"Job Name"}
+    %div.form-group
+      %label.control-label{:for=>"queue"} Destination Queue
+      %input.form-control{:type=>"text", :id=>"queue", :name=>"queue", :placeholder=>"The destination names a queue, a server, or a queue at a server."}
 
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"stderr_path"} Stderr Path
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"stderr_path", :placeholder=>"Stderr Path"}
+  %label.control-label Directories  
+  %fieldset.form-inline
+    %div.form-group
+      %label.sr-only{:for=>"working_directory"} Working Directory
+      %input.form-control{:type=>"text", :id=>"working_directory", :name=>"working_directory",:placeholder=>"Working Directory"}
+    %div.form-group
+      %label.sr-only{:for=>"root_directory"} Root Directory
+      %input.form-control{:type=>"text", :id=>"root_directory", :name=>"root_directory",:placeholder=>"Root Directory"}
+    %div.form-group
+      %label.sr-only{:for=>"stderr"} Stderr Path
+      %input.form-control{:type=>"text", :id=>"stderr", :name=>"stderr", :placeholder=>"Stderr Path"}
+    %div.form-group
+      %label.sr-only{:for=>"stdout"} Stdout Path
+      %input.form-control{:type=>"text", :id=>"stdout", :name=>"stdout",:placeholder=>"Stdout Path"}
 
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"stdout_path"} Stdout Path
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"stdout_path", :placeholder=>"Stdout Path"}
 
 
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %label{:class=>"checkbox"} 
-      %input{:type=>"checkbox", :id=>"fault_tollerant"} Fault Tollerant
+  %label.control-label Shell And Variables
+  %fieldset.form-inline
+    %div.form-group
+      %label.sr-only{:for=>"shell"} Shell Path
+      %input.form-control{:type=>"text", :id=>"shell", :name=>"shell", :value=>"/usr/bin/bash", :placeholder=>"shell path"}
+    %div.form-group
+      %label.sr-only{:for=>"variable_list"} Variable List
+      %input.form-control{:type=>"text", :id=>"variable_list", :name=>"variable_list", :placeholder=>"Expands the list of environment variables that are exported to the job."}
+    %div.form-group
+      %label.sr-only{:for=>"additional_attributes"} Additional Attributes
+      %input.form-control{:type=>"text", :id=>"additional_attributes", :name=>"additional_attributes", :placeholder=>"Additional attributes: attr_name=attr_value[,attr_name=attr_value...]"}
 
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %label{:class=>"checkbox"} 
-      %input{:type=>"checkbox", :id=>"hold_submission"} User Hold Submission
+  %fieldset.form-inline
+    %div.form-group
+      %label.control-label{:for=>"resource_list"} Resource List
+      %input.form-control{:type=>"text", :id=>"resource_list", :name=>"resource_list", :placeholder=>"nodes=2:ppn=2"}
 
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %label{:class=>"checkbox"} 
-      %input{:type=>"checkbox", :id=>"interactive"} Job Run as Interactive
+  %div.row
+    %div.col-md-7
+      %div.form-group
+      %label.control-label{:for=>"script"} Linux Script
+      %textarea.form-control{:rows=>15, :id=>"script", :name=>"script", :placeholder=>"Linux Script"}
+      %button{:type=>"submit", :class=>"btn btn-primary"} Submit
 
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %label{:class=>"checkbox"} 
-      %input{:type=>"checkbox", :id=>"join"} Join Outputs
+    %div.col-md-2
+      %label Optional Flags
+      %div.checkbox
+        %label
+          %input{:type=>"checkbox", :id=>"join", :name=>"join"} Join Outputs
+        %label
+          %input{:type=>"checkbox", :id=>"fault_tollerant",:name=>"fault_tollerant"} Fault Tollerant
+        %label
+          %input{:type=>"checkbox", :id=>"uer_hold", :name=>"uer_hold"} User Hold Submission
+        %label
+          %input{:type=>"checkbox", :id=>"interactive", :name=>"interactive"} Job Run as Interactive
+        %label
+          %input{:type=>"checkbox", :id=>"exports", :name=>"exports"} Export Variables to Batch Job
 
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}      
-      %label{:class=>"select"} Keep
-      %select{:id=>"keep"}
-        %option{:value=>'e'} standard error
-        %option{:value=>'o'} standard output
+    %div.col-md-3
+      %label.select{:for=>"keep"} Keep Ouput/Error on Host
+      %select.form-control.input-sm{:id=>"keep", :name=>"keep"}        
+        %option{:value=>''}
+        %option{:value=>'e'}  only standard error
+        %option{:value=>'o'}  only standard output
         %option{:value=>'eo'} both
-        %option{:value=>'oe'} both
-        %option{:value=>'n'} none
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"resource_list"} Resource List
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"resource_list", :placeholder=>"nodes=2:ppn=60"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"mail_options"} Mail Options
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"mail_options", :placeholder=>"abe"}
-
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"user_list"} Mail User List
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"user_list", :placeholder=>"john@deep.space.nine.org, doe@deep.speace.nine.org"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"priority"} Job Priority
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"priority", :placeholder=>"between -1024 and +1023 inclusive"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"user"} Execute as user
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"user", :placeholder=>"user[:group]"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"destination"} Destination Queue
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"destination", :placeholder=>"The destination names a queue, a server, or a queue at a server."}
-
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}      
-      %label{:class=>"select"} Rerunnable
-      %select{:id=>"rerunnable"}
+        %option{:value=>'n'}  none
+      %label.select{:for=>"rerunnable"} Rerunnable
+      %select.form-control.input-sm{:id=>"rerunnable", :name=>"rerunnable"}
+        %option{:value=>''}
         %option{:value=>'y'} Yes
         %option{:value=>'n'} No
 
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"shell"} Shell
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"shell", :placeholder=>"path list"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"task_array"} Task Array
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"task_array", :placeholder=>"array_request"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"execution_user"} Execution User
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"execution_user", :placeholder=>"user[@host][,user[@host],...]"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"variable_list"} Variable List
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"variable_list", :placeholder=>"Expands the list of environment variables that are exported to the job."}
-
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %label{:class=>"checkbox"} 
-      %input{:type=>"checkbox", :id=>"export_variable"} Export Variables to Batch Job
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"additional_attributes"} Additional Attributes
-    %div{:class=>"controls"}
-      %input{:type=>"text", :id=>"additional_attributes", :placeholder=>"attr_name=attr_value[,attr_name=attr_value...]"}
-
-  %div{:class=>"control-group"}
-    %label{:class=>"control-label", :for=>"inputScript"} Linux Script
-    %div{:class=>"controls"}
-      %textarea{:rows=>6, :id=>"inputScript", :placeholder=>"Linux Script"}
-  %div{:class=>"control-group"}
-    %div{:class=>"controls"}
-      %input{:type => "submit", :value => "Place in queue!"}
+    %fieldset
+      %div.form-group
+        %label.control-label{:for=>"mail_options"} Mail Options
+        %input.form-control.input-sm{:type=>"text", :id=>"mail_options", :name=>"mail_options", :placeholder=>"abe"}
+      %div.form-group
+        %label.control-label{:for=>"user_list"} Mail User List
+        %input.form-control.input-sm{:type=>"text", :id=>"user_list", :name=>"user_list", :placeholder=>"john@deep.space.nine.org, doe@deep.speace.nine.org"}
+      %div.form-group
+        %label.control-label{:for=>"priority"} Job Priority
+        %input.form-control.input-sm{:type=>"text", :id=>"priority", :name=>"priority", :placeholder=>"between -1024 and +1023 inclusive"}
+      %div.form-group
+        %label.control-label{:for=>"root_as_user"} Execute as user
+        %input.form-control.input-sm{:type=>"text", :id=>"root_as_user", :name=>"root_as_user", :placeholder=>"user[:group]"}
+      %div.form-group
+        %label.control-label{:for=>"array_request"} Task Array
+        %div.form-control.input-sm{:class=>"controls"}
+        %input{:type=>"text", :id=>"array_request", :name=>"array_request", :placeholder=>"array_request"}
+      %div.form-group
+        %label.control-label{:for=>"user_list"} Execution User
+        %input.form-control.input-sm{:type=>"text", :id=>"user_list", :name=>"user_list", :placeholder=>"user[@host][,user[@host],...]"}
