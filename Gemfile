@@ -12,6 +12,7 @@ gem 'shotgun'
 gem 'haml'
 gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 gem 'activesupport'
+gem 'time_diff'
 # gem "awesome_print"
 # gem 'sinatra-twitter-bootstrap', :require => 'sinatra/twitter-bootstrap'
 # Add dependencies to develop your gem here.
