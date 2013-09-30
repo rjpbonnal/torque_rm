@@ -134,13 +134,18 @@ module TORQUE
       end
   	end # config
 
-  	def l
-  		data=[@l, nodes, @walltime, @gres].select{|x| x}.join(',')
-      if data.empty?
-        nil
-      else
-        data
-      end
+  	def l	
+			if @l 
+				return @l.join(",")
+			else
+				data=[@l, nodes, @walltime, @gres].select{|x| x}.join(',')
+				if data.empty?
+					nil
+				else
+					data
+				end
+				return data
+			end
   	end
 
   	def nodes
