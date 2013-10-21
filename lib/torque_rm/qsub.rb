@@ -98,7 +98,7 @@ module TORQUE
   		@gres = opts[:gres]
   		@ppn = opts[:ppn]
   		@procs = opts[:procs]
-  		@m = validate_mail_options(opts)
+			@m = validate_mail_options(opts)
   		@M = opts[:M] || opts[:email]
   		@N = opts[:N] || opts[:name]
   		@o = opts[:o] || opts[:stdout] # [hostname:]path_name
@@ -163,7 +163,6 @@ module TORQUE
   				
   	end
 
-
   	def to_s
   	  pbs_script = ""
   	  [:a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l,:m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z].each do |option|
@@ -174,7 +173,7 @@ module TORQUE
   	  if script.nil?
   	  	warn("You are converting this qsub job into a script without a real code.")
   	  end
-  	  pbs_script
+  	  "#!/bin/bash\n"+pbs_script
     end
 
     # Create a qsub job on the remote server and then submits it
