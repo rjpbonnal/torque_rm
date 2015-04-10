@@ -164,7 +164,7 @@ module TORQUE
   	end
 
   	def to_s
-  	  pbs_script = ""
+  	  pbs_script = "#!/usr/bin/env bash\n"
   	  [:a, :A,:b,:c,:C,:d,:D,:e,:f,:h,:I,:j,:k,:l,:m,:M,:N,:o,:p,:P,:q,:r,:S,:t,:u,:v,:V,:W,:X,:z].each do |option|
   	  	value = send(option)
   	  	pbs_script << "#PBS -#{option} #{value}\n" unless value.nil?
@@ -173,7 +173,7 @@ module TORQUE
   	  if script.nil?
   	  	warn("You are converting this qsub job into a script without a real code.")
   	  end
-  	  "#!/bin/bash\n"+pbs_script
+  	  pbs_script
     end
 
     # Create a qsub job on the remote server and then submits it
